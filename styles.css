@@ -1,0 +1,9 @@
+#map {
+    height: 400px;
+    width: 600px;
+    margin-right:40px;
+}
+main{
+    display:flex;
+    flex-direction: row;
+}
