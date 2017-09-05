@@ -1,5 +1,5 @@
 var map;
-var infowindow;
+var infoWindow;
 
 
 
@@ -42,12 +42,19 @@ function initMap() {
             var service = new google.maps.places.PlacesService(map);
             service.nearbySearch({
                 location: pos,
-                radius: 500,
+                radius: 1000,
                 type: ['restaurant']
             }, callback);
             //service.textSearch(request, callback);
+            var request = {
+                placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4',
+                url: '',
+                reviews:'',
+                formatted_address:''
+            };
             service.getDetails(request, callback);
             function callback(results, status) {
+                console.log(results);
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     for (var i = 0; i < results.length; i++) {
                         createMarker(results[i]);
@@ -55,7 +62,11 @@ function initMap() {
                 }
             }
 
-            /*function createMarker(place) {
+            function createMarker(place) {
+                var photos = place.photos;
+                if (!photos) {
+                    return;
+                }
                 var placeLoc = place.geometry.location;
                 var marker = new google.maps.Marker({
                     map: map,
@@ -63,10 +74,12 @@ function initMap() {
                 });
 
                 google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent(place.name);
-                    infowindow.open(map, this);
+                    infoWindow.setContent('<div><strong>' + place.name + '</strong>' +
+                        'Place ID: ' + place.place_id + place.icon + place.rating + place.vicinity + place.types+'</div>');
+                    infoWindow.open(map, this);
                 });
-            }*/
+            }
+
 
         }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
