@@ -91,6 +91,7 @@ function initMap() {
             }
 
             function createMarker(place) {
+                console.log(place);
                 var photos = place.photos;
                 if (!photos) {
                     return;
@@ -103,10 +104,10 @@ function initMap() {
 
                 google.maps.event.addListener(marker, 'click', function() {
                     var request = {
-                        reference: place.reference
+                        placeId: place.place_id
                     };
                     service.getDetails(request, function(details, status) {
-
+                        console.log(details);
                         infowindow.setContent([
                             details.name,
                             details.formatted_address,
