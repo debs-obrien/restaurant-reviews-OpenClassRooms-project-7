@@ -24,8 +24,8 @@ function initMap() {
 
 
             infoWindow.setPosition(pos);
-            infoWindow.setContent('You are here');
-            infoWindow.open(map);
+            //infoWindow.setContent('You are here');
+            //infoWindow.open(map);
             map.setCenter(pos);
 
             var marker = new google.maps.Marker({
@@ -87,6 +87,16 @@ function initMap() {
             function callback(results, status) {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     results.forEach(createMarker);
+                    function displayRestaurants(){
+                        for(let i=0; i<results.length; i+=1){
+                            let restaurantDiv = document.getElementById('all-restaurants');
+                            let restaurant = document.createElement('div');
+                            restaurantDiv.appendChild(restaurant);
+                            restaurant.textContent+= results[i].name
+                        }
+
+                    }
+                    results.forEach(displayRestaurants);
                 }
             }
 
@@ -106,19 +116,31 @@ function initMap() {
                     var request = {
                         placeId: place.place_id
                     };
+
                     service.getDetails(request, function(details, status) {
                         console.log(details);
                         infowindow.setContent([
                             details.name,
+                            details.html_attributions.icon,
                             details.formatted_address,
                             details.website,
-                            details.rating,
+                            details.reviews[0].rating,
                             details.formatted_phone_number].join("<br />"));
                         infowindow.open(map, marker);
-                    });
 
+                        document.getElementById('name').textContent= details.name;
+                        console.log(details.name)
+                    });
+                    var panorama = new google.maps.StreetViewPanorama(
+                        document.getElementById('pano'), {
+                            position: place.geometry.location
+                            
+
+                        });
+                    map.setStreetView(panorama);
 
                 });
+
             }
 
 
