@@ -1,7 +1,6 @@
+"use strict";
 var map;
 var infoWindow;
-
-
 
 function initMap() {
     var palma = new google.maps.LatLng(39.5696, 2.6502);
@@ -57,66 +56,90 @@ function initMap() {
                 type: ['restaurant']
             }, callback);
 
-            /*function callback(results, status) {
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    for (var i = 0; i < results.length; i++) {
-                        var place = results[i];
-                        createMarker(results[i]);
-                        var request = {
-                            "placeId":results[i]['place_id']
-                        };
+            function displayRestaurants(results){
+                for(let i=0; i<results.length; i+=1){
+                    let restaurantDiv = document.getElementById('all-restaurants');
+                    let restaurant = document.createElement('div');
+                    restaurantDiv.appendChild(restaurant);
+                    restaurant.setAttribute("class", 'restaurant');
+                    restaurant.setAttribute("resId", results[i].id);
+                    restaurant.textContent+= results[i].name;
+                    restaurant.addEventListener('click', function() {
 
-                        service.getDetails(request, callback2);
-                        function callback2(details, status) {
-                            console.log(details);
+                        console.log(results[i].name)
+                        var place= results[i];
 
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                for (var i = 0; i < results.length; i++) {
-                                    createMarker(results[i]);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: place.geometry.location
+                        });
+
+                            var request = {
+                                placeId: place.place_id
+                            };
+                            //adds the street view functionality
+                            var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+                            var sv = new google.maps.StreetViewService();
+                            sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
+
+                            function processSVData(data, status) {
+                                if (status === 'OK') {
+                                    panorama.setPano(data.location.pano);
+                                    panorama.setPov({
+                                        heading: 270,
+                                        pitch: 0
+                                    });
+                                    panorama.setVisible(true);
+
+                                } else {
+                                    console.error('Street View data not found for this location.');
                                 }
                             }
-                        }
-                    }
-                    console.log(results.length);
+
+                            service.getDetails(request, function (details, status) {
+                                console.log(details);
+                                infowindow.setContent([
+                                    details.name,
+                                    details.html_attributions.icon,
+                                    details.formatted_address,
+                                    details.website,
+                                    details.reviews[0].rating,
+                                    details.formatted_phone_number].join("<br />"));
+                                infowindow.open(map, marker);
+
+                                document.getElementById('name').textContent = details.name;
+                                console.log(details.name)
+                            });
+
+                        });
+
+
 
                 }
-                //service.textSearch(request, callback);
 
-
-            }*/
-
+            }
             function callback(results, status) {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     results.forEach(createMarker);
-                    function displayRestaurants(){
-                        for(let i=0; i<results.length; i+=1){
-                            let restaurantDiv = document.getElementById('all-restaurants');
-                            let restaurant = document.createElement('div');
-                            restaurantDiv.appendChild(restaurant);
-                            restaurant.textContent+= results[i].name
-                        }
-
-                    }
-                    results.forEach(displayRestaurants);
+                    displayRestaurants(results);
                 }
             }
 
             function createMarker(place) {
                 console.log(place);
-                var photos = place.photos;
-                if (!photos) {
-                    return;
-                }
-                var placeLoc = place.geometry.location;
+
+                //var placeLoc = place.geometry.location;
                 var marker = new google.maps.Marker({
                     map: map,
                     position: place.geometry.location
                 });
 
+
                 google.maps.event.addListener(marker, 'click', function() {
                     var request = {
                         placeId: place.place_id
                     };
+                    //adds the street view functionality
                     var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
                     var sv = new google.maps.StreetViewService();
                     sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
@@ -147,15 +170,6 @@ function initMap() {
                         document.getElementById('name').textContent= details.name;
                         console.log(details.name)
                     });
-                     /*var panorama = new google.maps.StreetViewPanorama(
-                        document.getElementById('pano'), {
-                            position: place.geometry.location,
-                            linksControl: false,
-                            panControl: false,
-                            enableCloseButton: false
-
-                        });*/
-                    //map.setStreetView(panorama);
 
                 });
 
