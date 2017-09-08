@@ -30,7 +30,17 @@ function initMap() {
 
             var marker = new google.maps.Marker({
                 position: pos,
-                icon:'img/person.png'}
+                //icon:'img/person.png'
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: 'blue',
+                        fillOpacity: 0.3,
+                        scale: 20,
+                        strokeColor: 'blue',
+                        strokeWeight: 1
+                    },
+                    draggable:true
+            }
             );
             marker.setAnimation(google.maps.Animation.BOUNCE);
             setTimeout(function() {
@@ -42,24 +52,46 @@ function initMap() {
             var service = new google.maps.places.PlacesService(map);
             service.nearbySearch({
                 location: pos,
-                radius: 1000,
+                radius: 3000,
                 type: ['restaurant']
             }, callback);
-            //service.textSearch(request, callback);
-            var request = {
-                placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4',
-                url: '',
-                reviews:'',
-                formatted_address:''
-            };
-            service.getDetails(request, callback);
+
             function callback(results, status) {
                 console.log(results);
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     for (var i = 0; i < results.length; i++) {
+                        var place = results[i];
+                        //console.log(place); //gives all places
                         createMarker(results[i]);
+                        var request = {
+                            "placeId":results[i]['place_id']
+                        };
+                        //console.log(request);//gives all ids
+
+                        service.getDetails(request, callback2);
+                        var restaurants = results.length; //need this in function below
+
+                        function callback2(results, status) {
+                            for(var x = 0; x < restaurants.length; x++) {
+                                console.log(results);//gives back nothing
+                                //restaurants needs to be passed into function
+                                //but i tried and it didnt work
+                            }
+                            console.log(results);//this gives me what i want but only one
+                            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                for (var i = 0; i < results.length; i++) {
+                                    createMarker(results[i]);
+                                    //console.log(results[i]);
+                                }
+                            }
+                        }
                     }
+                    console.log(results.length);
+
                 }
+                //service.textSearch(request, callback);
+
+
             }
 
             function createMarker(place) {
@@ -88,11 +120,6 @@ function initMap() {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
     }
-
-
-
-
-
 
 }
 
