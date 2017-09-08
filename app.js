@@ -8,7 +8,8 @@ function initMap() {
     var test = new google.maps.LatLng(33.5696, 2.6502);
     map = new google.maps.Map(document.getElementById('map'), {
         center: palma,
-        zoom: 14
+        zoom: 14,
+        streetViewControl: false
     });
 
 
@@ -116,7 +117,22 @@ function initMap() {
                     var request = {
                         placeId: place.place_id
                     };
+                    var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+                    var sv = new google.maps.StreetViewService();
+                    sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
+                    function processSVData(data, status) {
+                        if (status === 'OK') {
+                            panorama.setPano(data.location.pano);
+                            panorama.setPov({
+                                heading: 270,
+                                pitch: 0
+                            });
+                            panorama.setVisible(true);
 
+                        } else {
+                            console.error('Street View data not found for this location.');
+                        }
+                    }
                     service.getDetails(request, function(details, status) {
                         console.log(details);
                         infowindow.setContent([
@@ -131,17 +147,20 @@ function initMap() {
                         document.getElementById('name').textContent= details.name;
                         console.log(details.name)
                     });
-                    var panorama = new google.maps.StreetViewPanorama(
+                     /*var panorama = new google.maps.StreetViewPanorama(
                         document.getElementById('pano'), {
-                            position: place.geometry.location
-                            
+                            position: place.geometry.location,
+                            linksControl: false,
+                            panControl: false,
+                            enableCloseButton: false
 
-                        });
-                    map.setStreetView(panorama);
+                        });*/
+                    //map.setStreetView(panorama);
 
                 });
 
             }
+
 
 
         }, function() {
