@@ -48,7 +48,7 @@ function initMap() {
             }, 4000);
             marker.setMap(map);
 
-
+            var infowindow = new google.maps.InfoWindow();
             var service = new google.maps.places.PlacesService(map);
             service.nearbySearch({
                 location: pos,
@@ -56,32 +56,22 @@ function initMap() {
                 type: ['restaurant']
             }, callback);
 
-            function callback(results, status) {
-                console.log(results);
+            /*function callback(results, status) {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     for (var i = 0; i < results.length; i++) {
                         var place = results[i];
-                        //console.log(place); //gives all places
                         createMarker(results[i]);
                         var request = {
                             "placeId":results[i]['place_id']
                         };
-                        //console.log(request);//gives all ids
 
                         service.getDetails(request, callback2);
-                        var restaurants = results.length; //need this in function below
+                        function callback2(details, status) {
+                            console.log(details);
 
-                        function callback2(results, status) {
-                            for(var x = 0; x < restaurants.length; x++) {
-                                console.log(results);//gives back nothing
-                                //restaurants needs to be passed into function
-                                //but i tried and it didnt work
-                            }
-                            console.log(results);//this gives me what i want but only one
                             if (status === google.maps.places.PlacesServiceStatus.OK) {
                                 for (var i = 0; i < results.length; i++) {
                                     createMarker(results[i]);
-                                    //console.log(results[i]);
                                 }
                             }
                         }
@@ -92,6 +82,12 @@ function initMap() {
                 //service.textSearch(request, callback);
 
 
+            }*/
+
+            function callback(results, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    results.forEach(createMarker);
+                }
             }
 
             function createMarker(place) {
@@ -106,9 +102,21 @@ function initMap() {
                 });
 
                 google.maps.event.addListener(marker, 'click', function() {
-                    infoWindow.setContent('<div><strong>' + place.name + '</strong>' +
-                        'Place ID: ' + place.place_id + place.icon + place.rating + place.vicinity + place.types+'</div>');
-                    infoWindow.open(map, this);
+                    var request = {
+                        reference: place.reference
+                    };
+                    service.getDetails(request, function(details, status) {
+
+                        infowindow.setContent([
+                            details.name,
+                            details.formatted_address,
+                            details.website,
+                            details.rating,
+                            details.formatted_phone_number].join("<br />"));
+                        infowindow.open(map, marker);
+                    });
+
+
                 });
             }
 
