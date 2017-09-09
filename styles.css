@@ -1,27 +1,25 @@
 #map {
     height: 400px;
-    width: 600px;
+    min-width: 1024px;
+    width:auto;
     margin-right:40px;
 }
-main{
+.map-and-list{
     display:flex;
     flex-direction: row;
+    position: relative;
 }
 #pano{
     height:200px;
-    width:200px;
+    width:250px;
 }
-
-
-
-
 
 #listing {
     position: absolute;
-    width: 200px;
-    height: 470px;
+    width: 250px;
+    height: 400px;
     overflow: auto;
-    left: 442px;
+    right: 20px;
     top: 0px;
     cursor: pointer;
     overflow-x: hidden;
@@ -36,14 +34,21 @@ main{
     z-index: 5;
     background-color: #fff;
 }
+#search{
+    position: absolute;
+}
 #locationField {
     position: absolute;
-    width: 190px;
-    height: 25px;
-    left: 108px;
-    top: 0px;
+    width: 200px;
+    height: 30px;
+    left: 122px;
+    top: 11px;
     z-index: 5;
-    background-color: #fff;
+}
+#autocomplete{
+    font-size: 15px;
+    padding: 3px;
+    width: 100%;
 }
 #controls {
     position: absolute;
@@ -54,9 +59,6 @@ main{
     background-color: #fff;
 }
 
-#autocomplete {
-    width: 100%;
-}
 #country {
     width: 100%;
 }

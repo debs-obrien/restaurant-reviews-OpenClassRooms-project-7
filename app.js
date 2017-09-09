@@ -5,6 +5,8 @@ var markers = [];
 var autocomplete;
 var MARKER_PATH = 'https://developers.google.com/maps/documentation/javascript/images/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
+let restaurantInfoDiv = document.getElementById('restaurant-info');
+restaurantInfoDiv.style.display = "none";
 
 function initMap() {
     var palma = new google.maps.LatLng(39.5696, 2.6502);
@@ -77,10 +79,14 @@ function initMap() {
 
             var places = new google.maps.places.PlacesService(map);
 
+            //on entering a city call onPlaceChanged function to search again
             autocomplete.addListener('place_changed', onPlaceChanged);
 
-
-// When the user selects a city, get the place details for the city and
+            //if the map is dragged search again
+            map.addListener('drag', function() {
+                search();
+            });
+            // When the user selects a city, get the place details for the city and
             // zoom the map in on the city.
             function onPlaceChanged() {
                 //displayRestaurants(results);
@@ -90,8 +96,63 @@ function initMap() {
                     map.setZoom(15);
                     search();
                 } else {
-                    document.getElementById('autocomplete').placeholder = 'Enter a city';
+                    document.getElementById('autocomplete').placeholder = 'Search for a Restaurant';
                 }
+            }
+            //displays extra info below when restaurant is clicked
+            function displayRestaurantInfo(place){
+                restaurantInfoDiv.style.display = "block";
+                document.getElementById('name').textContent = place.name;
+                let reviewsDiv = document.getElementById('reviews');
+                let reviewHTML = '';
+                reviewsDiv.html = reviewHTML;
+                console.log(place);
+                if(place.reviews>0){
+                    for(let i=0; i<place.reviews.length; i+=1){
+
+                        let review = place.reviews[i];
+                        reviewHTML += `<div>
+                                                                  <h3>Review ${i + 1} -
+                                                                        <span class="rating">${review.rating} Star Rating</span>
+                                                                  </h3>
+                                                                  <p> ${place.reviews[i].text} </p>
+                                                               </div>`;
+                        reviewsDiv.innerHTML = reviewHTML;
+                    }
+                }else{
+                    console.log('no reviews')
+                }
+
+
+                //adds the street view functionality
+                var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+                var sv = new google.maps.StreetViewService();
+                sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
+
+                function processSVData(data, status) {
+                    if (status === 'OK') {
+                        panorama.setPano(data.location.pano);
+                        panorama.setPov({
+                            heading: 270,
+                            pitch: 0
+                        });
+                        panorama.setVisible(true);
+
+                    } else {
+                        console.error('Street View data not found for this location.');
+                    }
+                }
+            }
+            //creates the marker icon with stars. if no stars gives a default icon
+            function createMarkerStars(result){
+                let rating = Math.ceil(result.rating);
+                let markerIcon;
+                if(isNaN(rating)){
+                    markerIcon = 'img/' + 'marker_default.png';
+                }else{
+                    markerIcon = 'img/' + 'marker_' + rating + '.png';
+                }
+                return markerIcon;
             }
 
             // Search for restaurants in the selected city, within the viewport of the map.
@@ -108,13 +169,14 @@ function initMap() {
                         // Create a marker for each restaurant found, and
                         // assign a letter of the alphabetic to each marker icon.
                         for (var i = 0; i < results.length; i++) {
-                            var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-                            var markerIcon = MARKER_PATH + markerLetter + '.png';
+                            createMarkerStars(results);
+                            //var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+                            //var markerIcon = MARKER_PATH + markerLetter + '.png';
                             // Use marker animation to drop the icons incrementally on the map.
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
-                                icon: markerIcon
+                                icon: createMarkerStars(results[i])
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             // in an info window.
@@ -145,9 +207,6 @@ function initMap() {
 
             function addResult(result, i) {
                 var results = document.getElementById('results');
-                var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-                var markerIcon = MARKER_PATH + markerLetter + '.png';
-
                 var tr = document.createElement('tr');
                 tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
                 tr.onclick = function () {
@@ -157,7 +216,7 @@ function initMap() {
                 var iconTd = document.createElement('td');
                 var nameTd = document.createElement('td');
                 var icon = document.createElement('img');
-                icon.src = markerIcon;
+                icon.src = createMarkerStars(result);
                 icon.setAttribute('class', 'placeIcon');
                 icon.setAttribute('className', 'placeIcon');
                 var name = document.createTextNode(result.name);
@@ -178,6 +237,7 @@ function initMap() {
             // Get the place details for a restaurant. Show the information in an info window,
             // anchored on the marker for the restaurant that the user selected.
             function showInfoWindow() {
+
                 var marker = this;
                 places.getDetails({placeId: marker.placeResult.place_id},
                     function (place, status) {
@@ -186,6 +246,7 @@ function initMap() {
                         }
                         infoWindow.open(map, marker);
                         buildIWContent(place);
+                        displayRestaurantInfo(place);
                     });
             }
 
@@ -237,207 +298,6 @@ function initMap() {
                 } else {
                     document.getElementById('iw-website-row').style.display = 'none';
                 }
-
-
-
-            /*
-                        var marker = new google.maps.Marker({
-                            position: pos,
-                            //icon:'img/person.png'
-                                icon: {
-                                    path: google.maps.SymbolPath.CIRCLE,
-                                    fillColor: 'blue',
-                                    fillOpacity: 0.3,
-                                    scale: 20,
-                                    strokeColor: 'blue',
-                                    strokeWeight: 1
-                                },
-                                draggable:true
-                        }
-                        );
-                        marker.setAnimation(google.maps.Animation.BOUNCE);
-                        setTimeout(function() {
-                            marker.setAnimation(null)
-                        }, 4000);
-                        marker.setMap(map);
-
-                        var infowindow = new google.maps.InfoWindow();
-                        var service = new google.maps.places.PlacesService(map);
-                        service.nearbySearch({
-                            location: pos,
-                            radius: 3000,
-                            type: ['restaurant']
-                        }, callback);
-
-                        function displayRestaurants(results){
-                            for(let i=0; i<results.length; i+=1){
-                                let restaurantDiv = document.getElementById('all-restaurants');
-                                let restaurant = document.createElement('div');
-                                restaurantDiv.appendChild(restaurant);
-                                restaurant.setAttribute("class", 'restaurant');
-                                restaurant.setAttribute("resId", results[i].id);
-                                restaurant.textContent+= results[i].name;
-                                restaurant.addEventListener('click', function() {
-
-                                    console.log(results[i].name)
-                                    var place= results[i];
-
-                                    var marker = new google.maps.Marker({
-                                        map: map,
-                                        position: place.geometry.location
-                                    });
-
-
-                                        var request = {
-                                            placeId: place.place_id
-                                        };
-                                        //adds the street view functionality
-                                        var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
-                                        var sv = new google.maps.StreetViewService();
-                                        sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
-
-                                        function processSVData(data, status) {
-                                            if (status === 'OK') {
-                                                panorama.setPano(data.location.pano);
-                                                panorama.setPov({
-                                                    heading: 270,
-                                                    pitch: 0
-                                                });
-                                                panorama.setVisible(true);
-
-                                            } else {
-                                                console.error('Street View data not found for this location.');
-                                            }
-                                        }
-
-                                        service.getDetails(request, function (details, status) {
-                                            console.log(details);
-                                            infowindow.setContent([
-                                                details.name,
-                                                details.html_attributions.icon,
-                                                details.formatted_address,
-                                                details.website,
-                                                details.reviews[0].rating,
-                                                details.formatted_phone_number].join("<br />"));
-                                            infowindow.open(map, marker);
-
-                                            document.getElementById('name').textContent = details.name;
-                                            let reviewsDiv = document.getElementById('reviews');
-                                            //let review = document.createElement('div');
-                                            //let reviewTitle = document.createElement('h3');
-                                            //let reviewText = document.createElement('p');
-                                            let reviewHTML = '';
-                                            //reviewsDiv.appendChild(review);
-                                            reviewsDiv.html = reviewHTML;
-                                            for(let i=0; i<details.reviews.length; i+=1){
-                                                console.log(details.reviews.length)
-                                                let review = details.reviews[i];
-                                                reviewHTML += `<div>
-                                                                  <h3>Review ${i +1} -
-                                                                        <span class="rating">${review.rating} Star Rating</span>
-                                                                  </h3>
-                                                                  <p> ${details.reviews[i].text} </p>
-                                                               </div>`;
-
-                                                reviewsDiv.innerHTML = reviewHTML;
-                                               }
-
-
-
-
-                                            if(details.reviews.length === 0){
-                                                reviewsDiv.appendChild(reviewText);
-                                                reviewTitle.textContent = 'No Reviews for this restaurant yet';
-                                            }
-
-
-
-
-                                        });
-
-                                    });
-
-
-
-                            }
-
-                        }
-                        map.addListener('center_changed', function() {
-                            map.setCenter(marker.getPosition());
-                        });
-                        function callback(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                results.forEach(createMarker);
-                                displayRestaurants(results);
-                            }
-                        }
-
-                        function createMarker(place) {
-                            console.log(place);
-
-                            //var placeLoc = place.geometry.location;
-                            var marker = new google.maps.Marker({
-                                map: map,
-                                position: place.geometry.location
-                            });
-
-
-
-
-                            google.maps.event.addListener(marker, 'click', function() {
-                                var request = {
-                                    placeId: place.place_id
-                                };
-                                //adds the street view functionality
-                                var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
-                                var sv = new google.maps.StreetViewService();
-                                sv.getPanorama({location: place.geometry.location, radius: 50}, processSVData);
-                                function processSVData(data, status) {
-                                    if (status === 'OK') {
-                                        panorama.setPano(data.location.pano);
-                                        panorama.setPov({
-                                            heading: 270,
-                                            pitch: 0
-                                        });
-                                        panorama.setVisible(true);
-
-                                    } else {
-                                        console.error('Street View data not found for this location.');
-                                    }
-                                }
-                                service.getDetails(request, function(details, status) {
-                                    console.log(details);
-                                    infowindow.setContent([
-                                        details.name,
-                                        details.html_attributions.icon,
-                                        details.formatted_address,
-                                        details.website,
-                                        details.reviews[0].rating,
-                                        details.formatted_phone_number].join("<br />"));
-                                    infowindow.open(map, marker);
-
-                                    document.getElementById('name').textContent= details.name;
-                                    console.log(details.name)
-                                });
-
-
-                            });
-
-
-                        }
-
-
-
-                    }, function() {
-                        handleLocationError(true, infoWindow, map.getCenter());
-                    });
-                } else {
-                    // Browser doesn't support Geolocation
-                    handleLocationError(false, infoWindow, map.getCenter());
-                }
-
-        }*/
-
 
             }}, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
