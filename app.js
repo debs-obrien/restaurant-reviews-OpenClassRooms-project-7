@@ -3,14 +3,12 @@ var map;
 var infoWindow;
 var markers = [];
 var autocomplete;
-var MARKER_PATH = 'https://developers.google.com/maps/documentation/javascript/images/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
 let restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
 
 function initMap() {
     var palma = new google.maps.LatLng(39.5696, 2.6502);
-    //var test = new google.maps.LatLng(33.5696, 2.6502);
     map = new google.maps.Map(document.getElementById('map'), {
         center: palma,
         zoom: 14,
@@ -41,7 +39,8 @@ function initMap() {
                         fillOpacity: 0.3,
                         scale: 20,
                         strokeColor: 'blue',
-                        strokeWeight: 1
+                        strokeWeight: 1,
+                        zIndex:1
                     },
                     draggable:true
                 }
@@ -67,8 +66,6 @@ function initMap() {
                     search()
                 }
             }
-
-
 
             // Create the autocomplete object and associate it with the UI input control.
             autocomplete = new google.maps.places.Autocomplete(
@@ -112,6 +109,11 @@ function initMap() {
             function displayRestaurantInfo(place){
                 restaurantInfoDiv.style.display = "block";
                 document.getElementById('name').textContent = place.name;
+                document.getElementById('address').textContent = place.vicinity;
+                document.getElementById('telephone').textContent = place.formatted_phone_number;
+                document.getElementById('website').innerHTML = '<b><a href="' + place.url +
+                    '">' + place.name + '</a></b>';
+
                 let reviewsDiv = document.getElementById('reviews');
                 let reviewHTML = '';
                 reviewsDiv.html = reviewHTML;
@@ -119,10 +121,10 @@ function initMap() {
                 if(place.reviews.length >0){
                     for(let i=0; i<place.reviews.length; i+=1){
                         let review = place.reviews[i];
-                        reviewHTML += `<div>
+                        reviewHTML += `<div class="restaurant-reviews">
                                                                   <h3 class="review-title">
                                                                   <span class="profile-photo" style="background-image: url('${place.reviews[i].profile_photo_url}')"></span>
-                                                                  <span class="rating">${review.rating} Star Rating</span>
+                                                                  <span id="review-rating" class="rating">${starRating(review)}</span>
                                                                   </h3>
                                                                   <p> ${place.reviews[i].text} </p>
                                                                </div>`;
@@ -130,6 +132,22 @@ function initMap() {
                     }
                 }else{
                     console.log('no reviews')
+                }
+
+                function starRating(place){
+                    let rating = [];
+                    if (place.rating) {
+                        for (var i = 0; i < 5; i++) {
+
+                            if (place.rating < (i + 0.5)) {
+                                rating.push('&#10025;');
+                            } else {
+                                rating.push('&#10029;');
+
+                            }
+                        }
+                        return rating.join(' ');
+                    }
                 }
 
 
@@ -181,7 +199,8 @@ function initMap() {
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
-                                icon: createMarkerStars(results[i])
+                                icon: createMarkerStars(results[i]),
+                                zIndex:52
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             markers[i].placeResult = results[i];
@@ -276,12 +295,14 @@ function initMap() {
                 document.getElementById('iw-address').textContent = place.vicinity;
 
                 if (place.formatted_phone_number) {
-                    document.getElementById('iw-phone-row').style.display = '';
+                    document.getElementById('iw-phone').style.display = '';
                     document.getElementById('iw-phone').textContent =
                         place.formatted_phone_number;
                 } else {
-                    document.getElementById('iw-phone-row').style.display = 'none';
+                    document.getElementById('iw-phone').style.display = 'none';
                 }
+
+
 
                 // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
                 // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
@@ -294,11 +315,11 @@ function initMap() {
                         } else {
                             ratingHtml += '&#10029;';
                         }
-                        document.getElementById('iw-rating-row').style.display = '';
+                        document.getElementById('iw-rating').style.display = '';
                         document.getElementById('iw-rating').innerHTML = ratingHtml;
                     }
                 } else {
-                    document.getElementById('iw-rating-row').style.display = 'none';
+                    document.getElementById('iw-rating').style.display = 'none';
                 }
 
                 // The regexp isolates the first part of the URL (domain plus subdomain)
@@ -310,16 +331,16 @@ function initMap() {
                         website = 'http://' + place.website + '/';
                         fullUrl = website;
                     }
-                    document.getElementById('iw-website-row').style.display = '';
+                    document.getElementById('iw-website').style.display = '';
                     document.getElementById('iw-website').textContent = website;
                 } else {
-                    document.getElementById('iw-website-row').style.display = 'none';
+                    document.getElementById('iw-website').style.display = 'none';
                 }
                 if (place.opening_hours.open_now) {
-                    document.getElementById('iw-open-row').style.display = '';
+                    document.getElementById('iw-open').style.display = '';
                     document.getElementById('iw-open').textContent = 'Open Now';
                 } else {
-                    document.getElementById('iw-website-row').style.display = 'none';
+                    document.getElementById('iw-open').style.display = 'none';
                 }
 
             }}, function() {

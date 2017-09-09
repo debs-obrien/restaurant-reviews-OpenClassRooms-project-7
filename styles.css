@@ -1,28 +1,38 @@
+body{
+    font-family: "Open Sans", Verdana, Geneva, sans-serif;
+    background-color: #383838;
+}
+p{
+    font-size: 14px;
+}
 #map {
-    height: 400px;
-    min-width: 1024px;
-    width:auto;
+    height: 100%;
+    width:100%;
     margin-right:40px;
 }
 .map-and-list{
     display:flex;
     flex-direction: row;
     position: relative;
+    width: 100%;
+    margin-bottom:20px;
+    background-color: #fff;
 }
 #pano{
-    height:200px;
-    width:250px;
+    height: auto;
+    max-height:600px;
+    order: 1;
+    width: 100%;
+    min-width: 320px;
 }
 
 #listing {
-    position: absolute;
-    width: 250px;
+    width: 100%;
     height: 400px;
     overflow: auto;
-    right: 20px;
-    top: 0px;
     cursor: pointer;
     overflow-x: hidden;
+    margin-top:10px;
 }
 
 #findhotels {
@@ -42,7 +52,7 @@
     width: 200px;
     height: 30px;
     left: 122px;
-    top: 11px;
+    top: 21px;
     z-index: 5;
 }
 #autocomplete{
@@ -73,7 +83,7 @@
 }
 #resultsTable {
     border-collapse: collapse;
-    width: 240px;
+    width: 100%;
 }
 #rating {
     font-size: 13px;
@@ -103,7 +113,118 @@
     align-items: center;
 }
 #more {
+    width: 90%;
+    display: none;
+    margin: 0 auto;
+    background-color: #8fb31d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+#more:hover{
+    background-color: #c2e254;
+}
+.container{
+    display: Flex;
+
+}
+.restaurant{
+    width:70%;
+    max-width:800px;
+    margin-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.info-wrapper{
+   width:250px;
+    margin-right: 10px;
+}
+.map-wrapper{
+    min-width:320px;
     width: 100%;
-    margin: 5px 0 0 0;
-    display:none;
+    height:400px;
+    padding:10px;
+}
+.restaurant-name{
+color:#96bb1e;
+}
+#restaurant-info{
+    background-color: #fff;
+    padding: 10px;
+}
+.rating{
+    font-size:22px;
+    color:#eb853b;
+}
+.restaurant-reviews{
+    border-bottom: 1px solid #c8c9cb;
+}
+header{
+    display:flex;
+    padding:15px;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+header h1{
+    color: #eb853b;
+    margin:0 auto;
+
+}
+.restaurant-details{
+    margin:0;
+}
+#iw-rating{
+    color: #eb853b;
+    font-size: 16px;
+}
+#iw-url a{
+    color:#96bb1e;
+}
+#website a{
+    color:#eb853b;
+}
+#iw-url a, #website a{
+    text-decoration:none;
+}
+
+#iw-url a:hover{
+    color:#c2e254;
+    text-decoration:underline;
+}
+#website a:hover{
+    color:#ffc527;
+    text-decoration:underline;
+}
+@media screen and (max-width:768px){
+    #pano{
+        height:300px;
+        display:none;
+    }
+    .info-wrapper{
+        width: auto;
+        margin-right: 10px;
+    }
+    #locationField{
+        left:132px;
+        top:14px;
+        width:170px;
+    }
+    .container, .map-and-list, header{
+        flex-direction: column;
+    }
+    .restaurant{
+        order:2;
+        width:100%;
+        padding:0;
+        margin:0;
+    }
+    .map-wrapper{
+        padding:0;
+    }
+    .logo{
+        text-align: center;
+    }
 }
