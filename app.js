@@ -10,7 +10,7 @@ restaurantInfoDiv.style.display = "none";
 
 function initMap() {
     var palma = new google.maps.LatLng(39.5696, 2.6502);
-    var test = new google.maps.LatLng(33.5696, 2.6502);
+    //var test = new google.maps.LatLng(33.5696, 2.6502);
     map = new google.maps.Map(document.getElementById('map'), {
         center: palma,
         zoom: 14,
@@ -83,9 +83,18 @@ function initMap() {
             autocomplete.addListener('place_changed', onPlaceChanged);
 
             //if the map is dragged search again
-            map.addListener('drag', function() {
+            map.addListener('dragend', function() {
                 search();
             });
+            //right clicking adds
+            map.addListener('rightclick', function(e) {
+                console.log('add');
+            });
+
+
+            google.maps.event.trigger(map, 'resize');
+
+
             // When the user selects a city, get the place details for the city and
             // zoom the map in on the city.
             function onPlaceChanged() {
@@ -160,31 +169,38 @@ function initMap() {
                 var search = {
                     bounds: map.getBounds(),
                     type: ['restaurant']
+
                 };
 
-                places.nearbySearch(search, function (results, status) {
+                places.nearbySearch(search, function (results, status, pagination) {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
-                        // Create a marker for each restaurant found, and
-                        // assign a letter of the alphabetic to each marker icon.
                         for (var i = 0; i < results.length; i++) {
                             createMarkerStars(results);
-                            //var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-                            //var markerIcon = MARKER_PATH + markerLetter + '.png';
-                            // Use marker animation to drop the icons incrementally on the map.
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(results[i])
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            // in an info window.
                             markers[i].placeResult = results[i];
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             setTimeout(dropMarker(i), i * 100);
                             addResult(results[i], i);
                         }
+                        if (pagination.hasNextPage) {
+                            var moreButton = document.getElementById('more');
+                            moreButton.style.display = 'block';
+
+                            moreButton.disabled = false;
+
+                            moreButton.addEventListener('click', function() {
+                                moreButton.disabled = true;
+                                pagination.nextPage();
+                            });
+                        }
+
                     }
                 });
             }
