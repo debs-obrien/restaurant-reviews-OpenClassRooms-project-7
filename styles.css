@@ -89,3 +89,16 @@
 .iw_table_icon {
     text-align: right;
 }
+.profile-photo{
+    width: 35px;
+    height: 35px;
+    display: block;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-right:20px;
+}
+.review-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

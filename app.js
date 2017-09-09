@@ -107,13 +107,13 @@ function initMap() {
                 let reviewHTML = '';
                 reviewsDiv.html = reviewHTML;
                 console.log(place);
-                if(place.reviews>0){
+                if(place.reviews.length >0){
                     for(let i=0; i<place.reviews.length; i+=1){
-
                         let review = place.reviews[i];
                         reviewHTML += `<div>
-                                                                  <h3>Review ${i + 1} -
-                                                                        <span class="rating">${review.rating} Star Rating</span>
+                                                                  <h3 class="review-title">
+                                                                  <span class="profile-photo" style="background-image: url('${place.reviews[i].profile_photo_url}')"></span>
+                                                                  <span class="rating">${review.rating} Star Rating</span>
                                                                   </h3>
                                                                   <p> ${place.reviews[i].text} </p>
                                                                </div>`;
@@ -252,6 +252,7 @@ function initMap() {
 
             // Load the place information into the HTML elements used by the info window.
             function buildIWContent(place) {
+                console.log(place)
                 document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
                     'src="' + place.icon + '"/>';
                 document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
@@ -295,6 +296,12 @@ function initMap() {
                     }
                     document.getElementById('iw-website-row').style.display = '';
                     document.getElementById('iw-website').textContent = website;
+                } else {
+                    document.getElementById('iw-website-row').style.display = 'none';
+                }
+                if (place.opening_hours.open_now) {
+                    document.getElementById('iw-open-row').style.display = '';
+                    document.getElementById('iw-open').textContent = 'Open Now';
                 } else {
                     document.getElementById('iw-website-row').style.display = 'none';
                 }
