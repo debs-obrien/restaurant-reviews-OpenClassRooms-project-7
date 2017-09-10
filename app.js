@@ -7,6 +7,21 @@ var hostnameRegexp = new RegExp('^https?://.+?/');
 let restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
 
+function starRating(place){
+    let rating = [];
+    if (place.rating) {
+        for (let i = 0; i < 5; i++) {
+            if (place.rating < (i + 0.5)) {
+                rating.push('&#10025;');
+            } else {
+                rating.push('&#10029;');
+            }
+        }
+        return rating.join(' ');
+    }
+}
+
+
 function initMap() {
     var palma = new google.maps.LatLng(39.5696, 2.6502);
     map = new google.maps.Map(document.getElementById('map'), {
@@ -107,6 +122,7 @@ function initMap() {
             }
             //displays extra info below when restaurant is clicked
             function displayRestaurantInfo(place){
+                showTheForm();
                 restaurantInfoDiv.style.display = "block";
                 document.getElementById('name').textContent = place.name;
                 document.getElementById('address').textContent = place.vicinity;
@@ -134,21 +150,7 @@ function initMap() {
                     console.log('no reviews')
                 }
 
-                function starRating(place){
-                    let rating = [];
-                    if (place.rating) {
-                        for (var i = 0; i < 5; i++) {
 
-                            if (place.rating < (i + 0.5)) {
-                                rating.push('&#10025;');
-                            } else {
-                                rating.push('&#10029;');
-
-                            }
-                        }
-                        return rating.join(' ');
-                    }
-                }
 
 
                 //adds the street view functionality
@@ -304,7 +306,7 @@ function initMap() {
 
 
 
-                // Assign a five-star rating to the restaurant, using a black star ('&#10029;')
+                // Assign a five-star rating to the restaurant, using a coloured star ('&#10029;')
                 // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
                 // for the rating points not achieved.
                 if (place.rating) {
@@ -350,4 +352,63 @@ function initMap() {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
     }
-            }
+}
+
+let newReviewArray = [];
+
+function showTheForm(){
+    document.getElementById("form-wrapper").style.display = 'block';
+    document.getElementById("add-review-button").style.display = 'block';
+}
+
+function hideTheForm(){
+    document.getElementById("form-wrapper").style.display = 'none';
+    document.getElementById("add-review-button").style.display = 'none';
+}
+
+document.getElementById("add-review").addEventListener("submit", function (e) {
+    e.preventDefault();
+    let newName = document.getElementById("your-name");
+    let newRating = document.getElementById("your-rating");
+    let newReview = document.getElementById("your-review");
+
+
+    if (!(newName.value && newRating.value && newReview.value)) { //if not empty return
+        return;
+    }
+
+    addToArray(newName.value, newRating.value, newReview.value);//add to array values from form
+    //showTheMessage('restaurant');
+    newName.value = "";   //reset form values to 0
+    newRating.value = ""; //reset form values to 0
+    newReview.value = ""; //reset form values to 0
+
+
+    hideTheForm();     //hide form show add button
+
+
+});
+
+
+function addToArray(newName, newRating, newReview){ //add to array and to the page
+    let newReviewDetails = {
+        name: newName,
+        rating: newRating,
+        review: newReview,
+    };
+
+    let avatar = 'img/avatar.png';
+    let reviewsDiv = document.getElementById('reviews');
+    let newReviewHTML = '';
+    newReviewHTML += `<div class="restaurant-reviews">
+                         <h3 class="review-title">
+                         <span class="profile-photo" style="background-image: url('${avatar}')"></span>
+                         <span id="review-rating" class="rating">${starRating(newReviewDetails)}</span>
+                         </h3>
+                         <p> ${newReviewDetails.review} </p>
+                       </div>`;
+
+    newReviewArray.push(newReviewDetails); //push new values to already created list
+    reviewsDiv.insertAdjacentHTML("afterbegin", newReviewHTML); //add to the top of content
+
+}
