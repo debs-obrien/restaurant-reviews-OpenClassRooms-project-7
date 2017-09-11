@@ -101,6 +101,7 @@ function initMap() {
             //right clicking adds
             map.addListener('rightclick', function(e) {
                 console.log('add');
+
             });
 
 
@@ -110,7 +111,6 @@ function initMap() {
             // When the user selects a city, get the place details for the city and
             // zoom the map in on the city.
             function onPlaceChanged() {
-                //displayRestaurants(results);
                 var place = autocomplete.getPlace();
                 if (place.geometry) {
                     map.panTo(place.geometry.location);
@@ -150,9 +150,6 @@ function initMap() {
                     console.log('no reviews')
                 }
 
-
-
-
                 //adds the street view functionality
                 var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
                 var sv = new google.maps.StreetViewService();
@@ -183,10 +180,20 @@ function initMap() {
                 }
                 return markerIcon;
             }
+            function createPhoto(place) {
+                var photos = place.photos;
+                let photo;
+                if (!photos) {
+                    photo = place.icon;
+                }else{
+                    photo = photos[0].getUrl({'maxWidth': 300, 'maxHeight': 170});
+                }
+                return photo;
+            }
 
             // Search for restaurants in the selected city, within the viewport of the map.
             function search() {
-                var search = {
+                let search = {
                     bounds: map.getBounds(),
                     type: ['restaurant']
 
@@ -196,12 +203,13 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
-                        for (var i = 0; i < results.length; i++) {
+                        for (let i = 0; i < results.length; i++) {
                             createMarkerStars(results);
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(results[i]),
+
                                 zIndex:52
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
@@ -213,9 +221,7 @@ function initMap() {
                         if (pagination.hasNextPage) {
                             var moreButton = document.getElementById('more');
                             moreButton.style.display = 'block';
-
                             moreButton.disabled = false;
-
                             moreButton.addEventListener('click', function() {
                                 moreButton.disabled = true;
                                 pagination.nextPage();
@@ -289,9 +295,10 @@ function initMap() {
 
             // Load the place information into the HTML elements used by the info window.
             function buildIWContent(place) {
-                console.log(place)
-                document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
-                    'src="' + place.icon + '"/>';
+
+                console.log(place);
+                document.getElementById('iw-icon').innerHTML = '<img class="photo" ' +
+                    'src="' + createPhoto(place) + '"/>';
                 document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
                     '">' + place.name + '</a></b>';
                 document.getElementById('iw-address').textContent = place.vicinity;
@@ -303,8 +310,6 @@ function initMap() {
                 } else {
                     document.getElementById('iw-phone').style.display = 'none';
                 }
-
-
 
                 // Assign a five-star rating to the restaurant, using a coloured star ('&#10029;')
                 // to indicate the rating the restaurant has earned, and a white star ('&#10025;')
@@ -372,25 +377,19 @@ document.getElementById("add-review").addEventListener("submit", function (e) {
     let newRating = document.getElementById("your-rating");
     let newReview = document.getElementById("your-review");
 
-
     if (!(newName.value && newRating.value && newReview.value)) { //if not empty return
         return;
     }
 
-    addToArray(newName.value, newRating.value, newReview.value);//add to array values from form
-    //showTheMessage('restaurant');
+    addReview(newName.value, newRating.value, newReview.value);//add to array values from form
     newName.value = "";   //reset form values to 0
-    newRating.value = ""; //reset form values to 0
-    newReview.value = ""; //reset form values to 0
-
-
-    hideTheForm();     //hide form show add button
-
-
+    newRating.value = "";
+    newReview.value = "";
+    hideTheForm();     //hide form and add button
 });
 
 
-function addToArray(newName, newRating, newReview){ //add to array and to the page
+function addReview(newName, newRating, newReview){ //add to array and to the page
     let newReviewDetails = {
         name: newName,
         rating: newRating,
@@ -408,7 +407,6 @@ function addToArray(newName, newRating, newReview){ //add to array and to the pa
                          <p> ${newReviewDetails.review} </p>
                        </div>`;
 
-    newReviewArray.push(newReviewDetails); //push new values to already created list
+    newReviewArray.push(newReviewDetails); //push new values to array to store them
     reviewsDiv.insertAdjacentHTML("afterbegin", newReviewHTML); //add to the top of content
-
 }

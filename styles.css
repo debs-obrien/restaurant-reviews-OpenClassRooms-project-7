@@ -28,7 +28,7 @@ p{
 
 #listing {
     width: 100%;
-    height: 400px;
+    height: 600px;
     overflow: auto;
     cursor: pointer;
     overflow-x: hidden;
@@ -142,11 +142,12 @@ p{
 .info-wrapper{
    width:250px;
     margin-right: 10px;
+    background-color: #fff;
 }
 .map-wrapper{
     min-width:320px;
     width: 100%;
-    height:400px;
+    height:600px;
     padding:10px;
 }
 .restaurant-name{
@@ -177,9 +178,32 @@ header h1{
 .restaurant-details{
     margin:0;
 }
+#info-content{
+    background-color:#4574d4;
+}
+.extra-details{
+    padding:0 10px 10px;
+    color: #fff;
+    font-weight: 300;
+    font-size: 13px;
+    max-width: 300px;
+}
+.extra-details div{
+    padding-bottom:5px;
+}
 #iw-rating{
     color: #eb853b;
-    font-size: 16px;
+    font-size: 25px;
+    text-align: center;
+}
+#iw-url {
+    font-size: 20px;
+    text-align: center;
+    margin: 5px 0 10px 0;
+}
+#iw-icon{
+    width:300px;
+    height:200px;
 }
 #iw-url a{
     color:#96bb1e;
