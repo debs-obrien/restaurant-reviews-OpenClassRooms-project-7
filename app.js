@@ -209,7 +209,6 @@ function initMap() {
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(results[i]),
-
                                 zIndex:52
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
@@ -259,7 +258,8 @@ function initMap() {
                 var iconTd = document.createElement('td');
                 var nameTd = document.createElement('td');
                 var icon = document.createElement('img');
-                icon.src = createMarkerStars(result);
+                //icon.src = createMarkerStars(result);
+                icon.src = createPhoto(result);
                 icon.setAttribute('class', 'placeIcon');
                 icon.setAttribute('className', 'placeIcon');
                 var name = document.createTextNode(result.name);

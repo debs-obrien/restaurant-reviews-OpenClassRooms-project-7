@@ -73,8 +73,8 @@ p{
     width: 100%;
 }
 .placeIcon {
-    width: 20px;
-    height: 34px;
+    width: 50px;
+    height: 35px;
     margin: 4px;
 }
 .hotelIcon {
@@ -140,7 +140,7 @@ p{
     padding-right: 10px;
 }
 .info-wrapper{
-   width:250px;
+   width:300px;
     margin-right: 10px;
     background-color: #fff;
 }
