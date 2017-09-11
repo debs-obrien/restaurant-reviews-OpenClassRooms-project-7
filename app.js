@@ -280,7 +280,6 @@ function initMap() {
             // Get the place details for a restaurant. Show the information in an info window,
             // anchored on the marker for the restaurant that the user selected.
             function showInfoWindow() {
-
                 var marker = this;
                 places.getDetails({placeId: marker.placeResult.place_id},
                     function (place, status) {

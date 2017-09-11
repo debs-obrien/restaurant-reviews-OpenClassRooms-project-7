@@ -175,18 +175,17 @@ header h1{
     margin:0 auto;
 
 }
+#info-window{
+    max-width:300px;
+}
 .restaurant-details{
     margin:0;
 }
-#info-content{
-    background-color:#4574d4;
-}
 .extra-details{
     padding:0 10px 10px;
-    color: #fff;
+    color: #383838;
     font-weight: 300;
     font-size: 13px;
-    max-width: 300px;
 }
 .extra-details div{
     padding-bottom:5px;
@@ -201,10 +200,8 @@ header h1{
     text-align: center;
     margin: 5px 0 10px 0;
 }
-#iw-icon{
-    width:300px;
-    height:200px;
-}
+
+
 #iw-url a{
     color:#96bb1e;
 }
@@ -222,6 +219,10 @@ header h1{
 #website a:hover, #add-review-button:hover{
     color:#ffc527;
     text-decoration:underline;
+}
+.gm-style .photo{
+    height: 190px;
+    width: 300px;
 }
 /* add a review form */
 
