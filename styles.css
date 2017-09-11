@@ -99,6 +99,9 @@ p{
 .iw_table_icon {
     text-align: right;
 }
+#iw-icon{
+    font-weight:bold
+}
 .profile-photo{
     width: 35px;
     height: 35px;
@@ -194,6 +197,7 @@ header h1{
     color: #eb853b;
     font-size: 25px;
     text-align: center;
+    font-weight:600;
 }
 #iw-url {
     font-size: 20px;
