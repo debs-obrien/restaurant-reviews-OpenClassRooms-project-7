@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 
 </head>
 <body>
@@ -19,71 +20,82 @@
 
     <div id="search">
         <div id="locationField">
-            <input id="autocomplete" placeholder="Enter a city" type="text" />
+            <input id="autocomplete" placeholder="Search by city" type="text" />
+            <input id="autocompleteRestaurant" placeholder="Search by Restaurant" type="text" />
         </div>
     </div>
     <div class="map-and-list">
         <div class="map-wrapper"><div id="map"></div></div>
-<div class="info-wrapper">
-    <div id="listing">
-    <table id="resultsTable">
-        <tbody id="results"></tbody>
+        <div class="info-wrapper">
+            <div id="listing">
+                <table id="resultsTable">
+                    <tbody id="results"></tbody>
 
-    </table>
-    <button id="more">More results</button>
-</div>
-</div>
+                </table>
+                <button id="more">More results</button>
+            </div>
+        </div>
 
         <div id="info-content">
 
             <div id="iw-icon"></div>
-            <div id="iw-rating"></div>
+            <h3 id="iw-rating"></h3>
             <div class="extra-details">
                 <div id="iw-url"></div>
                 <div id="iw-address"></div>
                 <div id="iw-phone"></div>
                 <div id="iw-website"></div>
                 <div id="iw-open"></div>
+                <a href="#restaurant-info" id="iw-reviews"></a>
             </div>
 
-    </div>
+        </div>
+        <div id="info-content-small">
+
+            <div id="iw-icon-small"></div>
+            <h3 id="iw-rating-small"></h3>
+            <div class="extra-details">
+                <div id="iw-url-small"></div>
+            </div>
+
+        </div>
 
 
     </div>
-<div id="restaurant-info">
-    <div class="container">
-    <div id="pano" class="street-view"></div>
-    <div class="restaurant">
-        <h2 class="restaurant-name" id="name"></h2>
-        <p class="restaurant-details" id="address"></p>
-        <p class="restaurant-details" id="telephone"></p>
-        <p class="restaurant-details" id="website"></p>
-        <div class="review-header">
-            <h3 class="title">Reviews</h3>
-            <button id="add-review-button" ><a href="#add-review">Add a Review</a></button>
-        </div>
-        <div id="reviews"></div>
-        <div id="show-message"></div>
-        <div id="form-wrapper">
-        <form id="add-review">
-            <label for="your-name">Please add Your Name</label>
-            <input type="text" name="your-name" id="your-name" placeholder="Your Name" required>
-            <label for="your-rating">What Rating do you give this Restaurant</label>
-            <select name="your-rating" id="your-rating" required>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <label for="your-review">What would you like to say about this restaurant</label>
-            <textarea name="your-review" id="your-review" placeholder="Your Review" required></textarea>
-            <button type="submit" id="add-to-array" class="button">Add Review</button>
-        </form>
+    <div id="restaurant-info">
+        <div class="container">
+            <div id="pano" class="street-view"></div>
+            <div class="restaurant">
+                <h2 class="restaurant-name" id="name"></h2>
+                <p class="restaurant-details" id="address"></p>
+                <p class="restaurant-details" id="telephone"></p>
+                <p class="restaurant-details" id="website"></p>
+                <div class="review-header">
+                    <h3 class="title">Reviews</h3>
+                    <button id="add-review-button" ><a href="#add-review">Add a Review</a></button>
+                </div>
+                <div id="reviews"></div>
+                <div id="show-message"></div>
+                <div id="form-wrapper">
+                    <form id="add-review">
+                        <label for="your-name">Please add Your Name</label>
+                        <input type="text" name="your-name" id="your-name" placeholder="Your Name" required>
+                        <label for="your-rating">What Rating do you give this Restaurant</label>
+                        <select name="your-rating" id="your-rating" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <label for="your-review">What would you like to say about this restaurant</label>
+                        <textarea name="your-review" id="your-review" placeholder="Your Review" required></textarea>
+                        <button type="submit" id="add-to-array" class="button">Add Review</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-</div>
 </main>
 <script src="app.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVXZ0vhPliqPIvwSUaSvZJ9XmcoJKtXaM&libraries=places&callback=initMap" async defer></script>

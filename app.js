@@ -1,4 +1,3 @@
-"use strict";
 var map;
 var infoWindow;
 var markers = [];
@@ -33,6 +32,10 @@ function initMap() {
 
     infoWindow = new google.maps.InfoWindow({
         content: document.getElementById('info-content')
+    });
+    infoWindowSmall = new google.maps.InfoWindow({
+        content: document.getElementById('info-content-small'),
+
     });
 
     // Try HTML5 geolocation.
@@ -214,6 +217,8 @@ function initMap() {
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             markers[i].placeResult = results[i];
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
+                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             setTimeout(dropMarker(i), i * 100);
                             addResult(results[i], i);
                         }
@@ -230,7 +235,9 @@ function initMap() {
                     }
                 });
             }
-
+            function closeInfoWindowSmall(){
+                infoWindowSmall.close(map, marker);
+            }
             function clearMarkers() {
                 for (var i = 0; i < markers.length; i++) {
                     if (markers[i]) {
@@ -280,6 +287,8 @@ function initMap() {
             // Get the place details for a restaurant. Show the information in an info window,
             // anchored on the marker for the restaurant that the user selected.
             function showInfoWindow() {
+                closeInfoWindowSmall();
+
                 var marker = this;
                 places.getDetails({placeId: marker.placeResult.place_id},
                     function (place, status) {
@@ -291,8 +300,40 @@ function initMap() {
                         displayRestaurantInfo(place);
                     });
             }
+            function showInfoWindowSmall() {
+                let marker = this;
+                places.getDetails({placeId: marker.placeResult.place_id},
+                    function (place, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                            return;
+                        }
+                        infoWindowSmall.open(map, marker);
+                        buildIWContentSmall(place);
+                    });
+            }
 
             // Load the place information into the HTML elements used by the info window.
+
+            function buildIWContentSmall(place) {
+                document.getElementById('iw-icon-small').innerHTML = '<img class="photo" ' +
+                    'src="' + createPhoto(place) + '"/>';
+                document.getElementById('iw-url-small').innerHTML = '<b>' + place.name + '</b>';
+                if (place.rating) {
+                    let ratingHtml = '';
+                    for (let i = 0; i < 5; i++) {
+                        if (place.rating < (i + 0.5)) {
+                            ratingHtml += '&#10025;';
+                        } else {
+                            ratingHtml += '&#10029;';
+                        }
+                        document.getElementById('iw-rating-small').style.display = '';
+                        document.getElementById('iw-rating-small').innerHTML = ratingHtml;
+                    }
+                } else {
+                    document.getElementById('iw-rating-small').style.display = 'none';
+                }
+            }
+
             function buildIWContent(place) {
 
                 console.log(place);
@@ -342,11 +383,13 @@ function initMap() {
                 } else {
                     document.getElementById('iw-website').style.display = 'none';
                 }
-                if (place.opening_hours.open_now) {
-                    document.getElementById('iw-open').style.display = '';
-                    document.getElementById('iw-open').textContent = 'Open Now';
-                } else {
-                    document.getElementById('iw-open').style.display = 'none';
+                if(place.opening_hours){
+                    if (place.opening_hours.open_now) {
+                        document.getElementById('iw-open').style.display = '';
+                        document.getElementById('iw-open').textContent = 'Open Now';
+                    } else {
+                        document.getElementById('iw-open').style.display = 'none';
+                    }
                 }
 
             }}, function() {

@@ -55,10 +55,13 @@ p{
     top: 21px;
     z-index: 5;
 }
-#autocomplete{
+#autocomplete, #autocompleteRestaurant{
     font-size: 15px;
     padding: 3px;
     width: 100%;
+}
+#autocompleteRestaurant{
+    margin-top:10px;
 }
 #controls {
     position: absolute;
@@ -143,7 +146,7 @@ p{
     padding-right: 10px;
 }
 .info-wrapper{
-   width:300px;
+    width:300px;
     margin-right: 10px;
     background-color: #fff;
 }
@@ -154,7 +157,7 @@ p{
     padding:10px;
 }
 .restaurant-name{
-color:#96bb1e;
+    color:#96bb1e;
 }
 #restaurant-info{
     background-color: #fff;
@@ -184,13 +187,14 @@ header h1{
 .restaurant-details{
     margin:0;
 }
-.extra-details{
+#info-content .extra-details{
     padding:0 10px 10px;
     color: #383838;
     font-weight: 300;
     font-size: 13px;
+    max-width:300px;
 }
-.extra-details div{
+#info-content .extra-details div{
     padding-bottom:5px;
 }
 #iw-rating{
@@ -198,6 +202,7 @@ header h1{
     font-size: 25px;
     text-align: center;
     font-weight:600;
+    margin:0;
 }
 #iw-url {
     font-size: 20px;
@@ -224,7 +229,7 @@ header h1{
     color:#ffc527;
     text-decoration:underline;
 }
-.gm-style .photo{
+#info-content .gm-style .photo{
     height: 190px;
     width: 300px;
 }
@@ -277,6 +282,33 @@ header h1{
 }
 #add-review textarea, #add-review input{
     border: 1px solid #c8c9cb;
+}
+
+#info-content-small{
+    font-size:13px;
+}
+#iw-icon-small .gm-style .photo{
+    width:50px;
+    height:35px;
+}
+#info-content-small .photo{
+    height: 35px;
+    width: 50px;
+}
+#iw-rating-small{
+    color: #eb853b;
+    margin:0;
+}
+#iw-url-small{
+    color:#96bb1e;
+}
+#iw-reviews{
+    color: #eb853b;
+    text-decoration:none;
+}
+#iw-reviews:hover{
+    color:#ffc527;
+    text-decoration:underline;
 }
 
 
