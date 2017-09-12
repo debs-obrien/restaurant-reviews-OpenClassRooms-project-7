@@ -391,6 +391,9 @@ function initMap() {
                         document.getElementById('iw-open').style.display = 'none';
                     }
                 }
+                if(place.reviews){
+                    document.getElementById('iw-reviews').textContent = 'See Reviews'
+                }
 
             }}, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
