@@ -88,7 +88,7 @@ function initMap() {
             // Create the autocomplete object and associate it with the UI input control.
             autocomplete = new google.maps.places.Autocomplete(
                 /** @type {!HTMLInputElement} */ (
-                    document.getElementById('autocomplete')), {
+                    document.getElementById('autocomplete-input')), {
                     types: ['(cities)'],
                 });
 

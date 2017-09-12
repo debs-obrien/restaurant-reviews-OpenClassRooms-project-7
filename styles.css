@@ -55,12 +55,12 @@ p{
     top: 21px;
     z-index: 5;
 }
-#autocomplete, #autocompleteRestaurant{
+#autocomplete-input, #autocompleteRestaurant-input{
     font-size: 15px;
     padding: 3px;
     width: 100%;
 }
-#autocompleteRestaurant{
+#autocompleteRestaurant-input{
     margin-top:10px;
 }
 #controls {
