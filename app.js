@@ -1,7 +1,9 @@
 var map;
 var infoWindow;
+let infoWindowSmall;
 var markers = [];
 var autocomplete;
+var autocompleteRestaurant;
 var hostnameRegexp = new RegExp('^https?://.+?/');
 let restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
@@ -90,6 +92,11 @@ function initMap() {
                 /** @type {!HTMLInputElement} */ (
                     document.getElementById('autocomplete-input')), {
                     types: ['(cities)'],
+                });
+            autocompleteRestaurant = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */ (
+                    document.getElementById('autocompleteRestaurant')), {
+                    types: ['establishment']
                 });
 
             var places = new google.maps.places.PlacesService(map);
