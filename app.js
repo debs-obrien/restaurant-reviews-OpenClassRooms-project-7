@@ -101,8 +101,10 @@ function initMap() {
 
             var places = new google.maps.places.PlacesService(map);
 
+
             //on entering a city call onPlaceChanged function to search again
             autocomplete.addListener('place_changed', onPlaceChanged);
+            autocompleteRestaurant.addListener('place_changed', onPlaceChanged2);
 
             //if the map is dragged search again
             map.addListener('dragend', function() {
@@ -129,6 +131,18 @@ function initMap() {
                 } else {
                     document.getElementById('autocomplete').placeholder = 'Search for a Restaurant';
                 }
+            }
+            function onPlaceChanged2() {
+                let place = autocompleteRestaurant.getPlace();
+                if (place.geometry) {
+                    map.panTo(place.geometry.location);
+                    map.setZoom(15);
+                    search();
+
+                } else {
+                    document.getElementById('autocompleteRestaurant').placeholder = 'Search for a Restaurant';
+                }
+                showInfoWindow2(place)
             }
             //displays extra info below when restaurant is clicked
             function displayRestaurantInfo(place){
@@ -306,6 +320,22 @@ function initMap() {
                         buildIWContent(place);
                         displayRestaurantInfo(place);
                     });
+            }
+            function showInfoWindow2(place) {
+                closeInfoWindowSmall();
+                console.log(place.id)
+                places.getDetails({placeId: place.id},
+                    function (place, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                            return;
+                        }
+                        infoWindow.open(map, place);
+                        buildIWContent(place);
+                        displayRestaurantInfo(place);
+                    });
+                let viewInfo = document.getElementById('iw-view-more');
+                google.maps.event.addListener(viewInfo, 'click', showInfoWindow);
+
             }
             function showInfoWindowSmall() {
                 let marker = this;
