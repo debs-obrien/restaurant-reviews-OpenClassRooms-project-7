@@ -1,3 +1,4 @@
+"use strict";
 var map;
 var infoWindow;
 let infoWindowSmall;
@@ -5,8 +6,9 @@ var markers = [];
 var autocomplete;
 var autocompleteRestaurant;
 var hostnameRegexp = new RegExp('^https?://.+?/');
-let restaurantInfoDiv = document.getElementById('restaurant-info');
+var restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
+
 
 function starRating(place){
     let rating = [];
@@ -47,7 +49,6 @@ function initMap() {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-
             infoWindow.setPosition(pos);
             map.setCenter(pos);
             //adds the circle of where you are
@@ -93,16 +94,16 @@ function initMap() {
                     document.getElementById('autocomplete-input')), {
                     types: ['(cities)'],
                 });
+
             autocompleteRestaurant = new google.maps.places.Autocomplete(
                 /** @type {!HTMLInputElement} */ (
-                    document.getElementById('autocompleteRestaurant')), {
+                    document.getElementById('autocompleteRestaurant-input')), {
                     types: ['establishment']
                 });
 
             var places = new google.maps.places.PlacesService(map);
 
-
-            //on entering a city call onPlaceChanged function to search again
+            //on entering a city or restaurant call onPlaceChanged function to search again
             autocomplete.addListener('place_changed', onPlaceChanged);
             autocompleteRestaurant.addListener('place_changed', onPlaceChanged2);
 
@@ -117,6 +118,7 @@ function initMap() {
             });
 
 
+
             google.maps.event.trigger(map, 'resize');
 
 
@@ -129,8 +131,24 @@ function initMap() {
                     map.setZoom(15);
                     search();
                 } else {
-                    document.getElementById('autocomplete').placeholder = 'Search for a Restaurant';
+                    document.getElementById('autocomplete').placeholder = 'Search for a City';
                 }
+            }
+            function showInfoWindow2(place) {
+
+                console.log(place.id)
+                places.getDetails({placeId: place.id},
+                    function (place, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                            return;
+                        }
+                        infoWindow.open(map, place);
+                        buildIWContent(place);
+                        displayRestaurantInfo(place);
+                    });
+                let viewInfo = document.getElementById('iw-view-more');
+                google.maps.event.addListener(viewInfo, 'click', showInfoWindow);
+
             }
             function onPlaceChanged2() {
                 let place = autocompleteRestaurant.getPlace();
@@ -228,7 +246,7 @@ function initMap() {
                         clearResults();
                         clearMarkers();
                         for (let i = 0; i < results.length; i++) {
-                            createMarkerStars(results);
+                            //createMarkerStars(results);
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
@@ -241,7 +259,7 @@ function initMap() {
                             google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             setTimeout(dropMarker(i), i * 100);
-                            addResult(results[i], i);
+                            addResultList(results[i], i);
                         }
                         if (pagination.hasNextPage) {
                             var moreButton = document.getElementById('more');
@@ -259,6 +277,7 @@ function initMap() {
             function closeInfoWindowSmall(){
                 infoWindowSmall.close(map, marker);
             }
+
             function clearMarkers() {
                 for (var i = 0; i < markers.length; i++) {
                     if (markers[i]) {
@@ -275,7 +294,7 @@ function initMap() {
                 };
             }
 
-            function addResult(result, i) {
+            function addResultList(result, i) {
                 var results = document.getElementById('results');
                 var tr = document.createElement('tr');
                 tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
@@ -309,8 +328,7 @@ function initMap() {
             // anchored on the marker for the restaurant that the user selected.
             function showInfoWindow() {
                 closeInfoWindowSmall();
-
-                var marker = this;
+                let marker = this;
                 places.getDetails({placeId: marker.placeResult.place_id},
                     function (place, status) {
                         if (status !== google.maps.places.PlacesServiceStatus.OK) {
@@ -320,22 +338,6 @@ function initMap() {
                         buildIWContent(place);
                         displayRestaurantInfo(place);
                     });
-            }
-            function showInfoWindow2(place) {
-                closeInfoWindowSmall();
-                console.log(place.id)
-                places.getDetails({placeId: place.id},
-                    function (place, status) {
-                        if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                            return;
-                        }
-                        infoWindow.open(map, place);
-                        buildIWContent(place);
-                        displayRestaurantInfo(place);
-                    });
-                let viewInfo = document.getElementById('iw-view-more');
-                google.maps.event.addListener(viewInfo, 'click', showInfoWindow);
-
             }
             function showInfoWindowSmall() {
                 let marker = this;
@@ -348,8 +350,6 @@ function initMap() {
                         buildIWContentSmall(place);
                     });
             }
-
-            // Load the place information into the HTML elements used by the info window.
 
             function buildIWContentSmall(place) {
                 document.getElementById('iw-icon-small').innerHTML = '<img class="photo" ' +
@@ -371,6 +371,8 @@ function initMap() {
                 }
             }
 
+
+            // Load the place information into the HTML elements used by the info window.
             function buildIWContent(place) {
 
                 console.log(place);
@@ -433,8 +435,8 @@ function initMap() {
                 }
 
             }}, function() {
-                handleLocationError(true, infoWindow, map.getCenter());
-            });
+            handleLocationError(true, infoWindow, map.getCenter());
+        });
     } else {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
