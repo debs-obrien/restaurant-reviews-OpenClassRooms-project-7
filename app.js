@@ -258,6 +258,8 @@ function initMap() {
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            google.maps.event.addListener(map, "click", closeInfoWindow);
+
                             setTimeout(dropMarker(i), i * 100);
                             addResultList(results[i], i);
                         }
@@ -273,6 +275,9 @@ function initMap() {
 
                     }
                 });
+            }
+            function closeInfoWindow(){
+                infoWindow.close(map, marker);
             }
             function closeInfoWindowSmall(){
                 infoWindowSmall.close(map, marker);
@@ -300,6 +305,12 @@ function initMap() {
                 tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
                 tr.onclick = function () {
                     google.maps.event.trigger(markers[i], 'click');
+                };
+                tr.onmousemove = function(){
+                    google.maps.event.trigger(markers[i], 'mouseover', showInfoWindowSmall);
+                };
+                tr.mouseout = function(){
+                    google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
                 };
 
                 var iconTd = document.createElement('td');
