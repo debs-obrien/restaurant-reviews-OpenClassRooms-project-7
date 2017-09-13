@@ -351,6 +351,7 @@ function initMap() {
                     });
             }
             function showInfoWindowSmall() {
+                closeInfoWindow();
                 let marker = this;
                 places.getDetails({placeId: marker.placeResult.place_id},
                     function (place, status) {
