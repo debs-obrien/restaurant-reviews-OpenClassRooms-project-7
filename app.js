@@ -135,8 +135,6 @@ function initMap() {
                 }
             }
             function showInfoWindow2(place) {
-
-                console.log(place.id)
                 places.getDetails({placeId: place.id},
                     function (place, status) {
                         if (status !== google.maps.places.PlacesServiceStatus.OK) {
@@ -146,9 +144,6 @@ function initMap() {
                         buildIWContent(place);
                         displayRestaurantInfo(place);
                     });
-                let viewInfo = document.getElementById('iw-view-more');
-                google.maps.event.addListener(viewInfo, 'click', showInfoWindow);
-
             }
             function onPlaceChanged2() {
                 let place = autocompleteRestaurant.getPlace();
@@ -213,7 +208,7 @@ function initMap() {
             }
             //creates the marker icon with stars. if no stars gives a default icon
             function createMarkerStars(result){
-                let rating = Math.ceil(result.rating);
+                let rating = Math.round(result.rating);
                 let markerIcon;
                 if(isNaN(rating)){
                     markerIcon = 'img/' + 'marker_default.png';
@@ -254,14 +249,37 @@ function initMap() {
                                 zIndex:52
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            markers[i].placeResult = results[i];
+                            //markers[i].placeResult = results[i];
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
                             setTimeout(dropMarker(i), i * 100);
+                            let sortAsc = false;
+                            let sortDesc = false;
+                            let sort4Star = false;
+                            if(sortAsc){
+                                results.sort(function (a, b) {
+                                    return b.rating - a.rating;
+                                });
+
+                            }else if(sortDesc){
+                                results.sort(function (a, b) {
+                                    return a.rating - b.rating;
+                                });
+                            }else if(sort4Star){
+                                let rating = Math.round(results.rating);
+                                if(results.hasOwnProperty('rating')){
+                                    return results
+                                }
+                                console.log(rating)
+
+                            }
                             addResultList(results[i], i);
+                            markers[i].placeResult = results[i];
+
+
                         }
                         if (pagination.hasNextPage) {
                             var moreButton = document.getElementById('more');
@@ -300,6 +318,7 @@ function initMap() {
             }
 
             function addResultList(result, i) {
+
                 var results = document.getElementById('results');
                 var tr = document.createElement('tr');
                 tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
@@ -327,6 +346,7 @@ function initMap() {
                 tr.appendChild(nameTd);
                 results.appendChild(tr);
             }
+
 
             function clearResults() {
                 var results = document.getElementById('results');
