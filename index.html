@@ -14,6 +14,13 @@
         <img src="img/logo.png" />
     </div>
     <h1>Restaurant Reviews</h1>
+    <div class="sort">
+        <label for="sort">Sort By</label>
+        <select name="sort" id="sort">
+            <option value="ratingAsc">Rating ^</option>
+            <option value="ratingDesc">Rating v</option>
+        </select>
+    </div>
 </header>
 <main>
 
@@ -27,10 +34,7 @@
         <div class="map-wrapper"><div id="map"></div></div>
         <div class="info-wrapper">
             <div id="listing">
-                <table id="resultsTable">
-                    <tbody id="results"></tbody>
-
-                </table>
+                <div id="results"></div>
                 <button id="more">More results</button>
             </div>
         </div>

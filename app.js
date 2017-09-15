@@ -8,7 +8,9 @@ var autocompleteRestaurant;
 var hostnameRegexp = new RegExp('^https?://.+?/');
 var restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
-
+let sortAsc = false;
+let sortDesc = false;
+let sort4Star = false;
 
 function starRating(place){
     let rating = [];
@@ -228,6 +230,21 @@ function initMap() {
                 return photo;
             }
 
+
+            let sortBy = document.getElementById('sort');
+            sortBy.addEventListener('change', function() {
+                if(sortBy.value === 'ratingAsc'){
+                    sortAsc = true;
+                    sortDesc = false;
+                    search();
+                }else if(sortBy.value === 'ratingDesc'){
+                    sortDesc = true;
+                    sortAsc = false;
+                    search();
+                }
+
+            });
+
             // Search for restaurants in the selected city, within the viewport of the map.
             function search() {
                 let search = {
@@ -240,6 +257,7 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
+
                         for (let i = 0; i < results.length; i++) {
                             //createMarkerStars(results);
                             markers[i] = new google.maps.Marker({
@@ -248,6 +266,7 @@ function initMap() {
                                 icon: createMarkerStars(results[i]),
                                 zIndex:52
                             });
+
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             //markers[i].placeResult = results[i];
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
@@ -256,9 +275,7 @@ function initMap() {
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
                             setTimeout(dropMarker(i), i * 100);
-                            let sortAsc = false;
-                            let sortDesc = false;
-                            let sort4Star = false;
+
                             if(sortAsc){
                                 results.sort(function (a, b) {
                                     return b.rating - a.rating;
@@ -279,21 +296,26 @@ function initMap() {
                             addResultList(results[i], i);
                             markers[i].placeResult = results[i];
 
-
                         }
+                        let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
-                            var moreButton = document.getElementById('more');
                             moreButton.style.display = 'block';
                             moreButton.disabled = false;
                             moreButton.addEventListener('click', function() {
                                 moreButton.disabled = true;
                                 pagination.nextPage();
                             });
+                        }else{
+                            moreButton.style.display = '';
                         }
 
+                        sortDesc = false;
+                        sortAsc = false;
                     }
                 });
             }
+
+
             function closeInfoWindow(){
                 infoWindow.close(map, marker);
             }
@@ -320,39 +342,28 @@ function initMap() {
             function addResultList(result, i) {
 
                 let results = document.getElementById('results');
-                let tr = document.createElement('tr');
-                tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
-                tr.onclick = function () {
+                let listDiv = document.createElement('div');
+                listDiv.setAttribute('class', 'results-list');
+                //listDiv.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
+                listDiv.onclick = function () {
                     google.maps.event.trigger(markers[i], 'click');
                 };
-                tr.onmousemove = function(){
+                listDiv.onmousemove = function(){
                     google.maps.event.trigger(markers[i], 'mouseover', showInfoWindowSmall);
                 };
-                tr.mouseout = function(){
+                listDiv.mouseout = function(){
                     google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
                 };
 
+                let details = `<div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
+                                <div class="placeDetails">
+                                <div class="name">${result.name}</div>
+                                <div class="rating">${starRating(result)}</div>
+                                <a href="#restaurant-info" class="reviews-link">See Reviews</a>
+                                </div>`;
+                listDiv.insertAdjacentHTML("beforeEnd", details);
 
-
-                let iconTd = document.createElement('td');
-                let nameTd = document.createElement('td');
-                let icon = document.createElement('img');
-                icon.src = createPhoto(result);
-                icon.setAttribute('class', 'placeIcon');
-                icon.setAttribute('className', 'placeIcon');
-                let name = document.createTextNode(result.name);
-                iconTd.appendChild(icon);
-                nameTd.appendChild(name);
-                tr.appendChild(iconTd);
-                tr.appendChild(nameTd);
-                if(result.rating){
-                    let ratingHTML = `<div class="rating">${starRating(result)}</div>`;
-                    nameTd.insertAdjacentHTML("beforeEnd", ratingHTML);
-                }
-                let reviewLink =  `<a href="#restaurant-info" class="reviews-link">See Reviews</a>`;
-                nameTd.insertAdjacentHTML("beforeEnd", reviewLink);
-
-                results.appendChild(tr);
+                results.appendChild(listDiv);
             }
 
 
