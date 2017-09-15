@@ -319,8 +319,8 @@ function initMap() {
 
             function addResultList(result, i) {
 
-                var results = document.getElementById('results');
-                var tr = document.createElement('tr');
+                let results = document.getElementById('results');
+                let tr = document.createElement('tr');
                 tr.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
                 tr.onclick = function () {
                     google.maps.event.trigger(markers[i], 'click');
@@ -332,18 +332,26 @@ function initMap() {
                     google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
                 };
 
-                var iconTd = document.createElement('td');
-                var nameTd = document.createElement('td');
-                var icon = document.createElement('img');
-                //icon.src = createMarkerStars(result);
+
+
+                let iconTd = document.createElement('td');
+                let nameTd = document.createElement('td');
+                let icon = document.createElement('img');
                 icon.src = createPhoto(result);
                 icon.setAttribute('class', 'placeIcon');
                 icon.setAttribute('className', 'placeIcon');
-                var name = document.createTextNode(result.name);
+                let name = document.createTextNode(result.name);
                 iconTd.appendChild(icon);
                 nameTd.appendChild(name);
                 tr.appendChild(iconTd);
                 tr.appendChild(nameTd);
+                if(result.rating){
+                    let ratingHTML = `<div class="rating">${starRating(result)}</div>`;
+                    nameTd.insertAdjacentHTML("beforeEnd", ratingHTML);
+                }
+                let reviewLink =  `<a href="#restaurant-info" class="reviews-link">See Reviews</a>`;
+                nameTd.insertAdjacentHTML("beforeEnd", reviewLink);
+
                 results.appendChild(tr);
             }
 
