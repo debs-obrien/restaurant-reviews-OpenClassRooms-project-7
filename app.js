@@ -548,7 +548,7 @@ function initMap() {
 
                 console.log(place);
                 closeInfoWindowNew();
-                infoWindow.setPosition(marker);
+                //infoWindow.setPosition(marker);
                 infoWindow.open(map, marker);
                 buildIWContent(place);
                 displayRestaurantInfo(place);
