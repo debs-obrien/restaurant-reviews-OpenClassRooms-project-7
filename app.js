@@ -2,6 +2,7 @@
 var map;
 var infoWindow;
 let infoWindowSmall;
+let infoWindowNew;
 var markers = [];
 var autocomplete;
 var autocompleteRestaurant;
@@ -12,6 +13,7 @@ let sortAsc = false;
 let sortDesc = false;
 let sort4Star = false;
 let newReviewArray = [];
+let loadMarkers = JSON.parse(localStorage.getItem('markerTest'));
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -43,6 +45,9 @@ function initMap() {
     });
     infoWindowSmall = new google.maps.InfoWindow({
         content: document.getElementById('info-content-small'),
+    });
+    infoWindowNew = new google.maps.InfoWindow({
+        content: document.getElementById('info-content-new-restaurant'),
     });
     /*-----------------------------------------------------------------------------------
      uses geo location to find out where you are
@@ -102,8 +107,23 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
-            map.addListener('rightclick', function(e) {
-                console.log('add');
+            google.maps.event.addListener(map, 'rightclick', function (e) {
+                alert("Latitude: " + e.latLng.lat() + "\r\nLongitude: " + e.latLng.lng());
+            });
+
+            map.addListener('dblclick', function(e) {
+                var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    icon: createMarkerStars(latlng),
+                });
+
+                google.maps.event.addListener(marker, 'click', addRestaurantInfoWindow);
+                marker.setMap(map);
+
+                var newMarker = {Lat: marker.position.lat(), Lng: marker.position.lng()};
+                localStorage["marker1"] = JSON.stringify(newMarker);
+                console.log(localStorage["marker1"]);
             });
             /*-----------------------------------------------------------------------------------
             When the user selects a city, get the place details for the city and
@@ -165,13 +185,14 @@ function initMap() {
                                 icon: createMarkerStars(results[i]),
                                 zIndex: 52
                             });
+
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            //markers[i].placeResult = results[i];
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
                             setTimeout(dropMarker(i), i * 100);
+
                             if (sortAsc) {
                                 results.sort(function(a, b) {
                                     return b.rating - a.rating;
@@ -203,6 +224,7 @@ function initMap() {
                         }
                         sortDesc = false;
                         sortAsc = false;
+                        sort4Star = false;
                     }
                 });
             }
@@ -304,6 +326,14 @@ function initMap() {
                     buildIWContentSmall(place);
                 });
             }
+            function addRestaurantInfoWindow(){
+                let marker = this;
+                console.log(marker);
+                infoWindowNew.open(map, marker);
+
+
+                buildResDetailContent(marker);
+            }
             /*-----------------------------------------------------------------------------------
             close the Info Windows
             -------------------------------------------------------------------------------------*/
@@ -313,6 +343,9 @@ function initMap() {
 
             function closeInfoWindowSmall() {
                 infoWindowSmall.close(map, marker);
+            }
+            function closeInfoWindowNew() {
+                infoWindowNew.close(map, marker);
             }
             /*-----------------------------------------------------------------------------------
             displays extra info below when restaurant is clicked
@@ -328,20 +361,22 @@ function initMap() {
                 let reviewHTML = '';
                 reviewsDiv.html = reviewHTML;
                 console.log(place);
-                if (place.reviews.length > 0) {
-                    for (let i = 0; i < place.reviews.length; i += 1) {
-                        let review = place.reviews[i];
-                        reviewHTML += `<div class="restaurant-reviews">
+                if(place.reviews){
+                    if (place.reviews.length > 0) {
+                        for (let i = 0; i < place.reviews.length; i += 1) {
+                            let review = place.reviews[i];
+                            reviewHTML += `<div class="restaurant-reviews">
                                           <h3 class="review-title">
                                              <span class="profile-photo" style="background-image: url('${place.reviews[i].profile_photo_url}')"></span>
                                              <span id="review-rating" class="rating">${starRating(review)}</span>
                                           </h3>
                                           <p> ${place.reviews[i].text} </p>
                                         </div>`;
-                        reviewsDiv.innerHTML = reviewHTML;
+                            reviewsDiv.innerHTML = reviewHTML;
+                        }
+                    } else {
+                        console.log('no reviews')
                     }
-                } else {
-                    console.log('no reviews')
                 }
                 /*-----------------------------------------------------------------------------------
                 adds the street view functionality
@@ -418,7 +453,6 @@ function initMap() {
             Builds the big info Window
             -------------------------------------------------------------------------------------*/
             function buildIWContent(place) {
-                console.log(place);
                 document.getElementById('iw-icon').innerHTML = '<img class="photo" ' + 'src="' + createPhoto(place) + '"/>';
                 document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
                 document.getElementById('iw-address').textContent = place.vicinity;
@@ -464,6 +498,63 @@ function initMap() {
                     document.getElementById('iw-reviews').textContent = 'See Reviews'
                 }
             }
+            /*-----------------------------------------------------------------------------------
+            Builds the new Restaurant info Window
+            -------------------------------------------------------------------------------------*/
+            function buildResDetailContent(marker){
+
+                document.getElementById('form-add-restaurant').innerHTML =`
+                    <h3 class="add-res-heading">Add A Restaruant</h3>
+                    <input type="text" id="res-name" name="res-name" placeholder="Restaurant Name" required/>
+                    <input type="hidden" id="res-location" name="res-location" value="${marker}"/>
+                    <input type="text" name="res-address" id="res-address" placeholder="Restaurant Address" required/>
+                    <label for="res-rating">Rating: </label>
+                    <select name="res-rating" id="res-rating" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    <input type="text" name="res-telephone" id="res-telephone" placeholder="Restaurant Telephone" />
+                    <input type="text" name="res-website" id="res-website" placeholder="Restaurant Website" />
+                    <button id="add-restaurant" class="button add-restaurant">Add New Restaurant</button>`;
+            }
+            document.getElementById("form-add-restaurant").addEventListener("submit", function(e) {
+                e.preventDefault();
+                console.log('new restaurant added');
+                let name = document.getElementById('res-name');
+                let address = document.getElementById('res-address');
+                let telephone = document.getElementById('res-telephone');
+                let website = document.getElementById('res-website');
+                let rating = document.getElementById('res-rating');
+                let location = document.getElementById('res-location');
+
+                let place = {
+                    name: name.value,
+                    vicinity: address.value,
+                    website: website.value,
+                    url: website.value,
+                    formatted_phone_number: telephone.value,
+                    rating: rating.value,
+                    geometry:{location: this},
+
+                };
+
+                /*var pos = {
+                    lat: this.position.lat(),
+                    lng: this.position.lng()
+                };*/
+
+                console.log(place);
+                closeInfoWindowNew();
+                infoWindow.setPosition(marker);
+                infoWindow.open(map, marker);
+                buildIWContent(place);
+                displayRestaurantInfo(place);
+            });
+            /*-----------------------------------------------------------------------------------*/
+
         }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
         });

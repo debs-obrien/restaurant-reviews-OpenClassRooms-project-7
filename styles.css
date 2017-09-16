@@ -128,7 +128,7 @@ p{
 #more{
     display: none;
 }
-#more, #add-to-array{
+#more, #add-to-array, #add-restaurant{
     width: 90%;
     margin: 0 auto;
     background-color: #8fb31d;
@@ -138,7 +138,7 @@ p{
     padding: 10px;
     font-size: 13px;
 }
-#more:hover, #add-to-array:hover{
+#more:hover, #add-to-array:hover, #add-restaurant:hover{
     background-color: #c2e254;
 }
 .container{
@@ -260,6 +260,11 @@ header h1{
 #your-rating{
     width: 50px;
     height: 20px;
+    border-radius: unset;
+    border: none;
+    background-color: #eb853b;
+    color: #fff;
+
 }
 #add-review-button{
     background-color:#eb853b;
@@ -325,7 +330,37 @@ header h1{
 }
 
 
+/* add new restaurant form info window */
+#form-add-restaurant{
+    max-width: 300px;
+    padding:10px;
+}
+#form-add-restaurant input{
+    height: 20px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+#form-add-restaurant select{
+    height: 20px;
+    width: 50px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    border-radius: unset;
+    border: none;
+    background-color: #eb853b;
+    color: #fff;
+}
+.add-res-heading{
+    color: #96bb1e;
+}
+#add-restaurant {
+    width: 95%;
+}
 
+
+/* media quieries */
 @media screen and (max-width:768px){
     #pano{
         height:300px;
