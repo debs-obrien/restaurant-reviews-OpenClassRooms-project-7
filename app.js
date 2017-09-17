@@ -17,6 +17,7 @@ let newReviewArray = [];
 let newRestaurantMarker = [];
 let restaurantIsNew = true;
 let newPlace = [];
+let newResNum = -1;
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -115,13 +116,16 @@ function initMap() {
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
             map.addListener('dblclick', function(e) {
+                restaurantIsNew = true;
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
                 var marker = new google.maps.Marker({
                     position: latlng,
                     icon: createMarkerStars(latlng),
                 });
+
                     google.maps.event.addListener(marker, 'click', addRestaurantInfoWindow);
                     marker.setMap(map);
+
             });
             /*-----------------------------------------------------------------------------------
             When the user selects a city, get the place details for the city and
@@ -333,10 +337,11 @@ function initMap() {
                     infoWindowNew.open(map, marker);
                     buildResDetailContent(marker);
                     newRestaurantMarker.push(marker);
+                    newResNum += 1;
                 }else{
                     infoWindow.open(map, marker);
-                    buildIWContent(newPlace[0]);
-                    displayRestaurantInfo(newPlace[0]);
+                    buildIWContent(newPlace[newResNum]);
+                    displayRestaurantInfo(newPlace[newResNum]);
                 }
             }
             /*-----------------------------------------------------------------------------------
@@ -552,15 +557,15 @@ function initMap() {
                     geometry:{location: pos},
                     icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png',
                     reviews: '',
+                    photos: '',
 
                 };
                 newPlace.push(place);
                 console.log(newPos);
                 closeInfoWindowNew();
-                let marker = newRestaurantMarker[0];
+                let marker = newRestaurantMarker[newResNum];
                 restaurantIsNew = false;
                 infoWindow.open(map, marker);
-
                 buildIWContent(place);
                 displayRestaurantInfo(place);
             });
