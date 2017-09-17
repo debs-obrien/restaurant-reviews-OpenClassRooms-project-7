@@ -121,6 +121,7 @@ function initMap() {
                 var marker = new google.maps.Marker({
                     position: latlng,
                     icon: createMarkerStars(latlng),
+                    id: newResNum +1
                 });
 
                     google.maps.event.addListener(marker, 'click', addRestaurantInfoWindow);
@@ -332,7 +333,6 @@ function initMap() {
             }
             function addRestaurantInfoWindow(){
                 let marker = this;
-
                 if(restaurantIsNew){
                     infoWindowNew.open(map, marker);
                     buildResDetailContent(marker);
@@ -340,8 +340,8 @@ function initMap() {
                     newResNum += 1;
                 }else{
                     infoWindow.open(map, marker);
-                    buildIWContent(newPlace[newResNum]);
-                    displayRestaurantInfo(newPlace[newResNum]);
+                    buildIWContent(newPlace[marker.id]);
+                    displayRestaurantInfo(newPlace[marker.id]);
                 }
             }
             /*-----------------------------------------------------------------------------------
@@ -395,9 +395,10 @@ function initMap() {
                 var sv = new google.maps.StreetViewService();
                 sv.getPanorama({
                     location: place.geometry.location,
+
                     radius: 50
                 }, processSVData);
-
+                console.log(place.geometry.location)
                 function processSVData(data, status) {
                     if (status === 'OK') {
                         panorama.setPano(data.location.pano);
@@ -532,7 +533,6 @@ function initMap() {
             }
             document.getElementById("form-add-restaurant").addEventListener("submit", function(e) {
                 e.preventDefault();
-                console.log('new restaurant added');
                 let name = document.getElementById('res-name');
                 let address = document.getElementById('res-address');
                 let telephone = document.getElementById('res-telephone');
@@ -541,12 +541,6 @@ function initMap() {
                 let locationLat = document.getElementById('res-location-lat');
                 let locationLng = document.getElementById('res-location-lng');
 
-                var newPos = {
-                    lat: locationLat.value,
-                    lng: locationLng.value
-
-                };
-
                 let place = {
                     name: name.value,
                     vicinity: address.value,
@@ -554,16 +548,21 @@ function initMap() {
                     url: website.value,
                     formatted_phone_number: telephone.value,
                     rating: rating.value,
-                    geometry:{location: pos},
+                    geometry:{location: {
+                        lat: locationLat.value, //TODO need to fix
+                        lng: locationLng.value  //TODO need to fix
+
+                    }},
                     icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png',
                     reviews: '',
                     photos: '',
 
                 };
                 newPlace.push(place);
-                console.log(newPos);
+                console.log(place.geometry.location);
                 closeInfoWindowNew();
                 let marker = newRestaurantMarker[newResNum];
+                console.log(newRestaurantMarker[0]);
                 restaurantIsNew = false;
                 infoWindow.open(map, marker);
                 buildIWContent(place);
