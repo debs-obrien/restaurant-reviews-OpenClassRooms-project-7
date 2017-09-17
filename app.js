@@ -3,6 +3,7 @@ var map;
 var infoWindow;
 let infoWindowSmall;
 let infoWindowNew;
+let infoWindowNewDetails;
 var markers = [];
 var autocomplete;
 var autocompleteRestaurant;
@@ -13,7 +14,9 @@ let sortAsc = false;
 let sortDesc = false;
 let sort4Star = false;
 let newReviewArray = [];
-let loadMarkers = JSON.parse(localStorage.getItem('markerTest'));
+let newRestaurantMarker = [];
+let restaurantIsNew = true;
+let newPlace = [];
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -34,30 +37,33 @@ function starRating(place) {
 initializes the map
 -------------------------------------------------------------------------------------*/
 function initMap() {
-    var palma = new google.maps.LatLng(39.5696, 2.6502);
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: palma,
-        zoom: 14,
-        streetViewControl: false
-    });
-    infoWindow = new google.maps.InfoWindow({
-        content: document.getElementById('info-content')
-    });
-    infoWindowSmall = new google.maps.InfoWindow({
-        content: document.getElementById('info-content-small'),
-    });
-    infoWindowNew = new google.maps.InfoWindow({
-        content: document.getElementById('info-content-new-restaurant'),
-    });
+
     /*-----------------------------------------------------------------------------------
      uses geo location to find out where you are
     -------------------------------------------------------------------------------------*/
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
+
             var pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
+
             };
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: pos,
+                zoom: 14,
+                streetViewControl: false
+            });
+            infoWindow = new google.maps.InfoWindow({
+                content: document.getElementById('info-content')
+            });
+            infoWindowSmall = new google.maps.InfoWindow({
+                content: document.getElementById('info-content-small'),
+            });
+            infoWindowNew = new google.maps.InfoWindow({
+                content: document.getElementById('info-content-new-restaurant'),
+            });
+
             infoWindow.setPosition(pos);
             map.setCenter(pos);
             //adds the circle of where you are
@@ -79,6 +85,7 @@ function initMap() {
             setTimeout(function() {
                 marker.setAnimation(null)
             }, 4000);
+            //adds the marker of where you are
             marker.setMap(map);
             /*-----------------------------------------------------------------------------------
             input fields on autocomplete search for city or establishment and call
@@ -107,23 +114,14 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
-            google.maps.event.addListener(map, 'rightclick', function (e) {
-                alert("Latitude: " + e.latLng.lat() + "\r\nLongitude: " + e.latLng.lng());
-            });
-
             map.addListener('dblclick', function(e) {
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
                 var marker = new google.maps.Marker({
                     position: latlng,
                     icon: createMarkerStars(latlng),
                 });
-
-                google.maps.event.addListener(marker, 'click', addRestaurantInfoWindow);
-                marker.setMap(map);
-
-                var newMarker = {Lat: marker.position.lat(), Lng: marker.position.lng()};
-                localStorage["marker1"] = JSON.stringify(newMarker);
-                console.log(localStorage["marker1"]);
+                    google.maps.event.addListener(marker, 'click', addRestaurantInfoWindow);
+                    marker.setMap(map);
             });
             /*-----------------------------------------------------------------------------------
             When the user selects a city, get the place details for the city and
@@ -159,7 +157,7 @@ function initMap() {
             var service = new google.maps.places.PlacesService(map);
             service.nearbySearch({
                 location: pos,
-                radius: 1000,
+                radius: 500,
                 type: ['restaurant']
             }, callback);
 
@@ -170,6 +168,7 @@ function initMap() {
             }
             function search() {
                 let search = {
+
                     bounds: map.getBounds(),
                     type: ['restaurant']
                 };
@@ -203,7 +202,7 @@ function initMap() {
                                 });
                             } else if (sort4Star) {
                                 let rating = Math.round(results.rating);
-                                if (results.hasOwnProperty('rating')) {
+                                if (results[i].rating.contains('4')) {
                                     return results
                                 }
                                 console.log(rating)
@@ -211,8 +210,10 @@ function initMap() {
                             addResultList(results[i], i);
                             markers[i].placeResult = results[i];
                         }
+                        //array with results then sort array
                         let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
+                            //push results to array
                             moreButton.style.display = 'block';
                             moreButton.disabled = false;
                             moreButton.addEventListener('click', function() {
@@ -260,7 +261,6 @@ function initMap() {
                 let results = document.getElementById('results');
                 let listDiv = document.createElement('div');
                 listDiv.setAttribute('class', 'results-list');
-                //listDiv.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
                 listDiv.onclick = function() {
                     google.maps.event.trigger(markers[i], 'click');
                 };
@@ -328,11 +328,16 @@ function initMap() {
             }
             function addRestaurantInfoWindow(){
                 let marker = this;
-                console.log(marker);
-                infoWindowNew.open(map, marker);
 
-
-                buildResDetailContent(marker);
+                if(restaurantIsNew){
+                    infoWindowNew.open(map, marker);
+                    buildResDetailContent(marker);
+                    newRestaurantMarker.push(marker);
+                }else{
+                    infoWindow.open(map, marker);
+                    buildIWContent(newPlace[0]);
+                    displayRestaurantInfo(newPlace[0]);
+                }
             }
             /*-----------------------------------------------------------------------------------
             close the Info Windows
@@ -502,11 +507,11 @@ function initMap() {
             Builds the new Restaurant info Window
             -------------------------------------------------------------------------------------*/
             function buildResDetailContent(marker){
-
                 document.getElementById('form-add-restaurant').innerHTML =`
                     <h3 class="add-res-heading">Add A Restaruant</h3>
                     <input type="text" id="res-name" name="res-name" placeholder="Restaurant Name" required/>
-                    <input type="hidden" id="res-location" name="res-location" value="${marker}"/>
+                    <input type="hidden" id="res-location-lat" name="res-location-lat" value="${marker.position.lat()}"/>
+                    <input type="hidden" id="res-location-lng" name="res-location-lng" value="${marker.position.lng()}"/>
                     <input type="text" name="res-address" id="res-address" placeholder="Restaurant Address" required/>
                     <label for="res-rating">Rating: </label>
                     <select name="res-rating" id="res-rating" required>
@@ -528,7 +533,14 @@ function initMap() {
                 let telephone = document.getElementById('res-telephone');
                 let website = document.getElementById('res-website');
                 let rating = document.getElementById('res-rating');
-                let location = document.getElementById('res-location');
+                let locationLat = document.getElementById('res-location-lat');
+                let locationLng = document.getElementById('res-location-lng');
+
+                var newPos = {
+                    lat: locationLat.value,
+                    lng: locationLng.value
+
+                };
 
                 let place = {
                     name: name.value,
@@ -537,19 +549,18 @@ function initMap() {
                     url: website.value,
                     formatted_phone_number: telephone.value,
                     rating: rating.value,
-                    geometry:{location: this},
+                    geometry:{location: pos},
+                    icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png',
+                    reviews: '',
 
                 };
-
-                /*var pos = {
-                    lat: this.position.lat(),
-                    lng: this.position.lng()
-                };*/
-
-                console.log(place);
+                newPlace.push(place);
+                console.log(newPos);
                 closeInfoWindowNew();
-                //infoWindow.setPosition(marker);
+                let marker = newRestaurantMarker[0];
+                restaurantIsNew = false;
                 infoWindow.open(map, marker);
+
                 buildIWContent(place);
                 displayRestaurantInfo(place);
             });
