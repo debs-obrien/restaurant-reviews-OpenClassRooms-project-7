@@ -11,13 +11,28 @@ var restaurantInfoDiv = document.getElementById('restaurant-info');
 restaurantInfoDiv.style.display = "none";
 let sortAsc = false;
 let sortDesc = false;
+let allStars = false;
+let sort5Star = false;
+let sort3Star = false;
 let sort4Star = false;
 let newReviewArray = [];
 let newRestaurantMarker = [];
 let restaurantIsNew = true;
 let newPlace = [];
 let newResNum = -1;
-let allRestaurants = new Set();
+let allRestaurants = [];
+let sortBy = document.getElementById('sort');
+let resultsDiv = document.getElementById('results');
+let listDiv = document.createElement('div');
+function restSort(){
+    sortAsc = false;
+    sortDesc = false;
+    sort4Star = false;
+    sort3Star = false;
+    sort5Star = false;
+    allStars = false;
+}
+
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -110,7 +125,8 @@ function initMap() {
              if the map is dragged search again
             -------------------------------------------------------------------------------------*/
             map.addListener('dragend', function() {
-                allRestaurants = [];
+                sortBy.value = 'allStars';
+                restSort();
                 search();
             });
             /*-----------------------------------------------------------------------------------
@@ -134,7 +150,7 @@ function initMap() {
             zoom the map in on the city.
             -------------------------------------------------------------------------------------*/
             function onPlaceChanged() {
-                allRestaurants = [];
+                sortBy.value = 'allStars';
                 var place = autocomplete.getPlace();
                 if (place.geometry) {
                     map.panTo(place.geometry.location);
@@ -148,7 +164,7 @@ function initMap() {
             When the user selects a restaurant, get the place details for the restaurant and
             -------------------------------------------------------------------------------------*/
             function onPlaceChanged2() {
-                allRestaurants = [];
+                sortBy.value = 'allStars';
                 let place = autocompleteRestaurant.getPlace();
                 if (place.geometry) {
                     map.panTo(place.geometry.location);
@@ -186,7 +202,7 @@ function initMap() {
                         for (let i = 0; i < results.length; i++) {
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
-                                animation: google.maps.Animation.DROP,
+                                //animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(results[i]),
                                 zIndex: 52
                             });
@@ -199,19 +215,38 @@ function initMap() {
 
                             setTimeout(dropMarker(i), i * 100);
 
-                            if (sortAsc) {
-                                results.sort(function (a, b) {
-                                    return b.rating - a.rating;
-                                });
+                            if (sort3Star) {
+                                if (Math.round(results[i].rating) <=3) {
+                                    addResultList(results[i], i);
+                                }
+                            }else if (sort4Star) {
+                                if (Math.round(results[i].rating) === 4) {
+                                    addResultList(results[i], i);
+                                }
 
-                            } else if (sortDesc) {
-                                results.sort(function (a, b) {
-                                    return a.rating - b.rating;
-                                });
+                            }else if (sort5Star) {
+                                if (Math.round(results[i].rating) === 5) {
+                                    addResultList(results[i], i);
+                                    if(results[i] === 0){
+                                        resultsDiv.innerHTML = 'Sorry no 5 star Hotels. Filter again!!'
+                                    }
+                                }
+
+
+                            }else{
+                                if (sortAsc) {
+                                    results.sort(function (a, b) {
+                                        return b.rating - a.rating;
+                                    });
+                                }else if (sortDesc) {
+                                    results.sort(function (a, b) {
+                                        return a.rating - b.rating;
+                                    });
+                                }
+                                addResultList(results[i], i);
                             }
-
-                            addResultList(results[i], i);
                             markers[i].placeResult = results[i];
+
 
                             let moreButton = document.getElementById('more');
                             if (pagination.hasNextPage) {
@@ -262,9 +297,7 @@ function initMap() {
                     }*/
 
                     //console.log(allRestaurants);
-                    sortDesc = false;
-                    sortAsc = false;
-                    sort4Star = false;
+                    restSort();
                 });
             }
             /*-----------------------------------------------------------------------------------
@@ -296,8 +329,6 @@ function initMap() {
             creates the list of restaurants on the right of the map
             -------------------------------------------------------------------------------------*/
             function addResultList(result, i) {
-                let results = document.getElementById('results');
-                let listDiv = document.createElement('div');
                 listDiv.setAttribute('class', 'results-list');
                 listDiv.onclick = function() {
                     google.maps.event.trigger(markers[i], 'click');
@@ -315,7 +346,7 @@ function initMap() {
                                 <a href="#restaurant-info" class="reviews-link">See Reviews</a>
                                 </div>`;
                 listDiv.insertAdjacentHTML("beforeEnd", details);
-                results.appendChild(listDiv);
+                resultsDiv.appendChild(listDiv);
             }
             /*-----------------------------------------------------------------------------------
             creates the photo from the api
@@ -459,15 +490,34 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             calls the sort by function
             -------------------------------------------------------------------------------------*/
-            let sortBy = document.getElementById('sort');
             sortBy.addEventListener('change', function() {
                 if (sortBy.value === 'ratingAsc') {
+                    restSort();
                     sortAsc = true;
-                    sortDesc = false;
                     search();
                 } else if (sortBy.value === 'ratingDesc') {
+                    restSort();
                     sortDesc = true;
-                    sortAsc = false;
+                    search();
+                }
+                else if (sortBy.value === 'sort4Star') {
+                    restSort();
+                    sort4Star = true;
+                    search();
+                }
+                else if (sortBy.value === 'sort3Star') {
+                    restSort();
+                    sort3Star = true;
+                    search();
+                }
+                else if (sortBy.value === 'sort5Star') {
+                    restSort();
+                    sort5Star = true;
+                    search();
+                }
+                else if (sortBy.value === 'allStars') {
+                    restSort();
+                    allStars = true;
                     search();
                 }
             });
@@ -591,11 +641,14 @@ function initMap() {
                     photos: '',
 
                 };
+                /*-----------------------------------------------------------------------------------
+                Pushes to array so that it knows which new restaurant to open when you add more than one
+                -------------------------------------------------------------------------------------*/
                 newPlace.push(place);
-                console.log(place.geometry.location);
+                //console.log(place.geometry.location);
                 closeInfoWindowNew();
                 let marker = newRestaurantMarker[newResNum];
-                console.log(newRestaurantMarker[0]);
+                //console.log(newRestaurantMarker[0]);
                 restaurantIsNew = false;
                 infoWindow.open(map, marker);
                 buildIWContent(place);
