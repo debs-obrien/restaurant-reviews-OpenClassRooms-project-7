@@ -3,7 +3,6 @@ var map;
 var infoWindow;
 let infoWindowSmall;
 let infoWindowNew;
-let infoWindowNewDetails;
 var markers = [];
 var autocomplete;
 var autocompleteRestaurant;
@@ -18,6 +17,7 @@ let newRestaurantMarker = [];
 let restaurantIsNew = true;
 let newPlace = [];
 let newResNum = -1;
+let allRestaurants = new Set();
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -110,6 +110,7 @@ function initMap() {
              if the map is dragged search again
             -------------------------------------------------------------------------------------*/
             map.addListener('dragend', function() {
+                allRestaurants = [];
                 search();
             });
             /*-----------------------------------------------------------------------------------
@@ -133,6 +134,7 @@ function initMap() {
             zoom the map in on the city.
             -------------------------------------------------------------------------------------*/
             function onPlaceChanged() {
+                allRestaurants = [];
                 var place = autocomplete.getPlace();
                 if (place.geometry) {
                     map.panTo(place.geometry.location);
@@ -146,6 +148,7 @@ function initMap() {
             When the user selects a restaurant, get the place details for the restaurant and
             -------------------------------------------------------------------------------------*/
             function onPlaceChanged2() {
+                allRestaurants = [];
                 let place = autocompleteRestaurant.getPlace();
                 if (place.geometry) {
                     map.panTo(place.geometry.location);
@@ -173,7 +176,6 @@ function initMap() {
             }
             function search() {
                 let search = {
-
                     bounds: map.getBounds(),
                     type: ['restaurant']
                 };
@@ -182,7 +184,6 @@ function initMap() {
                         clearResults();
                         clearMarkers();
                         for (let i = 0; i < results.length; i++) {
-                            //createMarkerStars(results);
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 animation: google.maps.Animation.DROP,
@@ -195,43 +196,75 @@ function initMap() {
                             google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
+
                             setTimeout(dropMarker(i), i * 100);
 
                             if (sortAsc) {
-                                results.sort(function(a, b) {
+                                results.sort(function (a, b) {
                                     return b.rating - a.rating;
                                 });
+
                             } else if (sortDesc) {
-                                results.sort(function(a, b) {
+                                results.sort(function (a, b) {
                                     return a.rating - b.rating;
                                 });
-                            } else if (sort4Star) {
-                                let rating = Math.round(results.rating);
-                                if (results[i].rating.contains('4')) {
-                                    return results
-                                }
-                                console.log(rating)
                             }
+
                             addResultList(results[i], i);
                             markers[i].placeResult = results[i];
+
+                            let moreButton = document.getElementById('more');
+                            if (pagination.hasNextPage) {
+                                //allRestaurants.add(results[i]);
+                                moreButton.style.display = 'block';
+                                moreButton.disabled = false;
+                                moreButton.addEventListener('click', function() {
+                                    moreButton.disabled = true;
+                                    pagination.nextPage();
+                                });
+                            } else {
+                                moreButton.style.display = '';
+                            }
                         }
-                        //array with results then sort array
-                        let moreButton = document.getElementById('more');
-                        if (pagination.hasNextPage) {
-                            //push results to array
-                            moreButton.style.display = 'block';
-                            moreButton.disabled = false;
-                            moreButton.addEventListener('click', function() {
-                                moreButton.disabled = true;
-                                pagination.nextPage();
-                            });
-                        } else {
-                            moreButton.style.display = '';
-                        }
-                        sortDesc = false;
-                        sortAsc = false;
-                        sort4Star = false;
                     }
+                    /*if (sortAsc) {
+                        clearResults();
+                        allRestaurants.add(results);
+                        console.log(allRestaurants);
+                        for(let i=0; i<20; i+=1){
+                            allRestaurants.sort(function(a, b) {
+                                return b.rating - a.rating;
+                            });
+                            addResultList(allRestaurants[i], i);
+                            markers[i].placeResult = allRestaurants[i];
+                        }
+
+                    } else if (sortDesc) {
+                        clearResults();
+                        allRestaurants.add(results);
+
+                        for(let i=0; i<20; i+=1){
+                            let allRestaurantsArray = [];
+                            allRestaurantsArray.push(allRestaurants);
+                            allRestaurantsArray.sort(function(a, b) {
+                                return a.rating - b.rating;
+                            });
+                            addResultList(allRestaurants[i], i);
+                            markers[i].placeResult = allRestaurants[i];
+                        }
+
+                    } else if (sort4Star) {
+                        let rating = Math.round(allRestaurants.rating);
+                        if (allRestaurants[i].rating.contains('4')) {
+                            return allRestaurants
+                        }
+                        console.log(rating)
+                    }*/
+
+                    //console.log(allRestaurants);
+                    sortDesc = false;
+                    sortAsc = false;
+                    sort4Star = false;
                 });
             }
             /*-----------------------------------------------------------------------------------
