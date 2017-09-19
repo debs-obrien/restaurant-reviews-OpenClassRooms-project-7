@@ -80,10 +80,6 @@ p{
 }
 .results-list{
     display:flex;
-    flex-direction: column;
-}
-.list{
-    display:flex;
     padding: 10px 0;
     border-bottom: 1px solid #f2f2f2;
 }
@@ -337,7 +333,7 @@ header h1{
 /* add new restaurant form info window */
 #form-add-restaurant{
     max-width: 300px;
-    
+
 }
 #form-add-restaurant input{
     height: 20px;

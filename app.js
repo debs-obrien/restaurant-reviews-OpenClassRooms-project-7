@@ -22,8 +22,7 @@ let newPlace = [];
 let newResNum = -1;
 let allRestaurants = [];
 let sortBy = document.getElementById('sort');
-let resultsDiv = document.getElementById('results');
-let listDiv = document.createElement('div');
+
 function restSort(){
     sortAsc = false;
     sortDesc = false;
@@ -54,6 +53,7 @@ initializes the map
 -------------------------------------------------------------------------------------*/
 function initMap() {
 
+
     /*-----------------------------------------------------------------------------------
      uses geo location to find out where you are
     -------------------------------------------------------------------------------------*/
@@ -70,6 +70,7 @@ function initMap() {
                 zoom: 14,
                 streetViewControl: false
             });
+
             infoWindow = new google.maps.InfoWindow({
                 content: document.getElementById('info-content')
             });
@@ -132,6 +133,12 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
+            google.maps.event.addListener(map, "rightclick", function(event) {
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
+                // populate yor box/field with lat, lng
+                alert("Lat=" + lat + "; Lng=" + lng);
+            });
             map.addListener('dblclick', function(e) {
                 restaurantIsNew = true;
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
@@ -250,7 +257,6 @@ function initMap() {
 
                             let moreButton = document.getElementById('more');
                             if (pagination.hasNextPage) {
-                                //allRestaurants.add(results[i]);
                                 moreButton.style.display = 'block';
                                 moreButton.disabled = false;
                                 moreButton.addEventListener('click', function() {
@@ -329,6 +335,8 @@ function initMap() {
             creates the list of restaurants on the right of the map
             -------------------------------------------------------------------------------------*/
             function addResultList(result, i) {
+                let resultsDiv = document.getElementById('results');
+                let listDiv = document.createElement('div');
                 listDiv.setAttribute('class', 'results-list');
                 listDiv.onclick = function() {
                     google.maps.event.trigger(markers[i], 'click');
@@ -339,12 +347,12 @@ function initMap() {
                 listDiv.mouseout = function() {
                     google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
                 };
-                let details = `<div class="list"><div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
+                let details = `<div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
                                 <div class="placeDetails">
                                 <div class="name">${result.name}</div>
                                 <div class="rating">${starRating(result)}</div>
                                 <a href="#restaurant-info" class="reviews-link">See Reviews</a>
-                                </div></div>`;
+                                </div>`;
                 listDiv.insertAdjacentHTML("beforeEnd", details);
                 resultsDiv.appendChild(listDiv);
             }
