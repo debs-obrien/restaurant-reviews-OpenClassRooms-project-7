@@ -339,12 +339,12 @@ function initMap() {
                 listDiv.mouseout = function() {
                     google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
                 };
-                let details = `<div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
+                let details = `<div class="list"><div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
                                 <div class="placeDetails">
                                 <div class="name">${result.name}</div>
                                 <div class="rating">${starRating(result)}</div>
                                 <a href="#restaurant-info" class="reviews-link">See Reviews</a>
-                                </div>`;
+                                </div></div>`;
                 listDiv.insertAdjacentHTML("beforeEnd", details);
                 resultsDiv.appendChild(listDiv);
             }
