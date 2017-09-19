@@ -5,8 +5,8 @@ eqfeed_callback({
         {
             "geometry": {
                 "location": {
-                    "lat": 39.585459005343015,
-                    "lng": 2.631697655724121
+                    "lat": 39.58260557318532,
+                    "lng": 2.6307320594787598
                 }
             },
             "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
@@ -95,8 +95,8 @@ eqfeed_callback({
         {
             "geometry": {
                 "location": {
-                    "lat": 39.584978674157234,
-                    "lng": 2.63447642326355
+                    "lat": 39.58716979278917,
+                    "lng": 2.638521194458008
                 }
             },
             "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",

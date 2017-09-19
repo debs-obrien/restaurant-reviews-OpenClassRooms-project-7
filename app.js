@@ -137,6 +137,13 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
+            google.maps.event.addListener(map, "rightclick", function(event) {
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
+                // populate yor box/field with lat, lng
+                console.log("Lat=" + lat + "; Lng=" + lng);
+            });
+
             map.addListener('rightclick', function (e) {
                 restaurantIsNew = true;
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
@@ -235,6 +242,7 @@ function initMap() {
             }
 
             function search() {
+                allRestaurants=[];
                 let search = {
                     bounds: map.getBounds(),
                     type: ['restaurant']
@@ -244,14 +252,33 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
-                        var script = document.createElement('script');
+                        const script = document.createElement('script');
                         script.src = 'restaurants.js';
                         document.getElementsByTagName('head')[0].appendChild(script);
+
+
+                        for (let i = 0; i < results.length; i++) {
+                            markers[i] = new google.maps.Marker({
+                                position: results[i].geometry.location,
+                                //animation: google.maps.Animation.DROP,
+                                icon: createMarkerStars(results[i]),
+                                zIndex: 52
+                            });
+
+                            // If the user clicks a restaurant marker, show the details of that restaurant
+                            google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
+                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            google.maps.event.addListener(map, "click", closeInfoWindow);
+
+                            setTimeout(dropMarker(i), i * 100);
+                            sortResults(markers, results, i);
+                        }
                         window.eqfeed_callback = function (results) {
                             console.log(results.results[0]);
                             results = results.results;
 
-                            for (var i = 0; i < results.length; i++) {
+                            for (let i = 0; i < results.length; i++) {
                                 allRestaurants.push(results[i]);
                                 markers[i] = new google.maps.Marker({
                                     position: results[i].geometry.location,
@@ -272,36 +299,16 @@ function initMap() {
                             }
 
                         };
-
-                        for (let i = 0; i < results.length; i++) {
-                            markers[i] = new google.maps.Marker({
-                                position: results[i].geometry.location,
-                                //animation: google.maps.Animation.DROP,
-                                icon: createMarkerStars(results[i]),
-                                zIndex: 52
+                        let moreButton = document.getElementById('more');
+                        if (pagination.hasNextPage) {
+                            moreButton.style.display = 'block';
+                            moreButton.disabled = false;
+                            moreButton.addEventListener('click', function () {
+                                moreButton.disabled = true;
+                                pagination.nextPage();
                             });
-
-                            // If the user clicks a restaurant marker, show the details of that restaurant
-                            google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
-                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
-                            google.maps.event.addListener(map, "click", closeInfoWindow);
-
-                            setTimeout(dropMarker(i), i * 100);
-
-                            sortResults(markers, results, i);
-
-                            let moreButton = document.getElementById('more');
-                            if (pagination.hasNextPage) {
-                                moreButton.style.display = 'block';
-                                moreButton.disabled = false;
-                                moreButton.addEventListener('click', function () {
-                                    moreButton.disabled = true;
-                                    pagination.nextPage();
-                                });
-                            } else {
-                                moreButton.style.display = '';
-                            }
+                        } else {
+                            moreButton.style.display = '';
                         }
                     }
 
