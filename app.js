@@ -23,6 +23,7 @@ let newResNum = -1;
 let allRestaurants = [];
 let sortBy = document.getElementById('sort');
 
+
 function restSort(){
     sortAsc = false;
     sortDesc = false;
@@ -53,7 +54,6 @@ initializes the map
 -------------------------------------------------------------------------------------*/
 function initMap() {
 
-
     /*-----------------------------------------------------------------------------------
      uses geo location to find out where you are
     -------------------------------------------------------------------------------------*/
@@ -65,11 +65,13 @@ function initMap() {
                 lng: position.coords.longitude
 
             };
+
             map = new google.maps.Map(document.getElementById('map'), {
                 center: pos,
                 zoom: 14,
                 streetViewControl: false
             });
+
 
             infoWindow = new google.maps.InfoWindow({
                 content: document.getElementById('info-content')
@@ -186,6 +188,8 @@ function initMap() {
             -------------------------------------------------------------------------------------*/
             var places = new google.maps.places.PlacesService(map);
             var service = new google.maps.places.PlacesService(map);
+
+
             service.nearbySearch({
                 location: pos,
                 radius: 500,
@@ -203,9 +207,37 @@ function initMap() {
                     type: ['restaurant']
                 };
                 places.nearbySearch(search, function(results, status, pagination) {
+
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
+                        var script = document.createElement('script');
+                        script.src = 'restaurants.js';
+                        document.getElementsByTagName('head')[0].appendChild(script);
+                        window.eqfeed_callback = function(results) {
+                            console.log(results.results[0]);
+                            results = results.results;
+
+                            for (var i = 0; i < results.length; i++) {
+                                allRestaurants.push(results[i]);
+                                markers[i] = new google.maps.Marker({
+                                    position: results[i].geometry.location,
+                                    //animation: google.maps.Animation.DROP,
+                                    icon: createMarkerStars(results[i]),
+                                    zIndex: 52,
+                                    id:i,
+                                });
+
+                                // If the user clicks a restaurant marker, show the details of that restaurant
+                                google.maps.event.addListener(markers[i], 'click', showInfoWindowJSON);
+                                google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallJSON);
+                                google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                                google.maps.event.addListener(map, "click", closeInfoWindow);
+
+                            }
+
+                        };
+
                         for (let i = 0; i < results.length; i++) {
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
@@ -268,41 +300,6 @@ function initMap() {
                             }
                         }
                     }
-                    /*if (sortAsc) {
-                        clearResults();
-                        allRestaurants.add(results);
-                        console.log(allRestaurants);
-                        for(let i=0; i<20; i+=1){
-                            allRestaurants.sort(function(a, b) {
-                                return b.rating - a.rating;
-                            });
-                            addResultList(allRestaurants[i], i);
-                            markers[i].placeResult = allRestaurants[i];
-                        }
-
-                    } else if (sortDesc) {
-                        clearResults();
-                        allRestaurants.add(results);
-
-                        for(let i=0; i<20; i+=1){
-                            let allRestaurantsArray = [];
-                            allRestaurantsArray.push(allRestaurants);
-                            allRestaurantsArray.sort(function(a, b) {
-                                return a.rating - b.rating;
-                            });
-                            addResultList(allRestaurants[i], i);
-                            markers[i].placeResult = allRestaurants[i];
-                        }
-
-                    } else if (sort4Star) {
-                        let rating = Math.round(allRestaurants.rating);
-                        if (allRestaurants[i].rating.contains('4')) {
-                            return allRestaurants
-                        }
-                        console.log(rating)
-                    }*/
-
-                    //console.log(allRestaurants);
                     restSort();
                 });
             }
@@ -341,12 +338,12 @@ function initMap() {
                 listDiv.onclick = function() {
                     google.maps.event.trigger(markers[i], 'click');
                 };
-                listDiv.onmousemove = function() {
+                /*listDiv.onmousemove = function() {
                     google.maps.event.trigger(markers[i], 'mouseover', showInfoWindowSmall);
                 };
                 listDiv.mouseout = function() {
                     google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
-                };
+                };*/
                 let details = `<div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
                                 <div class="placeDetails">
                                 <div class="name">${result.name}</div>
@@ -378,6 +375,7 @@ function initMap() {
             function showInfoWindow() {
                 closeInfoWindowSmall();
                 let marker = this;
+
                 places.getDetails({
                     placeId: marker.placeResult.place_id
                 }, function(place, status) {
@@ -390,18 +388,38 @@ function initMap() {
                 });
             }
 
+            function showInfoWindowJSON() {
+                closeInfoWindowSmall();
+                let marker = this;
+                    infoWindow.open(map, marker);
+                    console.log(marker.id);
+                    console.log(allRestaurants[marker.id]);
+                    buildIWContent(allRestaurants[marker.id]);
+                    displayRestaurantInfo(allRestaurants[marker.id]);
+            }
+
             function showInfoWindowSmall() {
                 closeInfoWindow();
                 let marker = this;
-                places.getDetails({
-                    placeId: marker.placeResult.place_id
-                }, function(place, status) {
-                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                        return;
-                    }
-                    infoWindowSmall.open(map, marker);
-                    buildIWContentSmall(place);
-                });
+
+                    places.getDetails({
+                        placeId: marker.placeResult.place_id
+                    }, function(place, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                            return;
+                        }
+                        infoWindowSmall.open(map, marker);
+                        buildIWContentSmall(place);
+                    });
+
+
+            }
+            function showInfoWindowSmallJSON() {
+                closeInfoWindowSmall();
+                let marker = this;
+
+                infoWindowSmall.open(map, marker);
+                buildIWContentSmall(allRestaurants[marker.id]);
             }
             function addRestaurantInfoWindow(){
                 let marker = this;
@@ -447,9 +465,15 @@ function initMap() {
                     if (place.reviews.length > 0) {
                         for (let i = 0; i < place.reviews.length; i += 1) {
                             let review = place.reviews[i];
+                            let avatar;
+                            if(place.reviews[i].profile_photo_url){
+                                avatar = place.reviews[i].profile_photo_url;
+                            }else{
+                                avatar = 'img/avatar.png';
+                            }
                             reviewHTML += `<div class="restaurant-reviews">
                                           <h3 class="review-title">
-                                             <span class="profile-photo" style="background-image: url('${place.reviews[i].profile_photo_url}')"></span>
+                                             <span class="profile-photo" style="background-image: url('${avatar}')"></span>
                                              <span id="review-rating" class="rating">${starRating(review)}</span>
                                           </h3>
                                           <p> ${place.reviews[i].text} </p>
@@ -565,8 +589,8 @@ function initMap() {
                     document.getElementById('iw-phone').style.display = 'none';
                 }
                 if (place.rating) {
-                    var ratingHtml = '';
-                    for (var i = 0; i < 5; i++) {
+                    let ratingHtml = '';
+                    for (let i = 0; i < 5; i++) {
                         if (place.rating < (i + 0.5)) {
                             ratingHtml += '&#10025;';
                         } else {
@@ -579,7 +603,7 @@ function initMap() {
                     document.getElementById('iw-rating').style.display = 'none';
                 }
                 if (place.website) {
-                    var website = hostnameRegexp.exec(place.website);
+                    let website = hostnameRegexp.exec(place.website);
                     if (website === null) {
                         website = 'http://' + place.website + '/';
                     }
