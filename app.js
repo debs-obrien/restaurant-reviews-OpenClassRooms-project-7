@@ -22,7 +22,11 @@ let myRestaurants = [];
 let googleRestaurants = [];
 let allRestaurants = [];
 let restaurantInfoDiv = document.getElementById('restaurant-info');
+let searchDiv = document.getElementById('search');
+let sortOptionsDiv = document.getElementById('sort-options');
+sortOptionsDiv.style.display = "none";
 restaurantInfoDiv.style.display = "none";
+searchDiv.style.display = "none";
 let sortBy = document.getElementById('sort');
 let form = document.getElementById('form-add-restaurant');
 
@@ -34,8 +38,6 @@ function restSort() {
     sort5Star = false;
     allStars = false;
 }
-
-
 /*-----------------------------------------------------------------------------------
 creates the stars for the rating
 -------------------------------------------------------------------------------------*/
@@ -69,6 +71,10 @@ function initMap() {
                 lng: position.coords.longitude,
 
             };
+            if(pos.lat){
+                searchDiv.style.display = "block";
+                sortOptionsDiv.style.display = "block";
+            }
             map = new google.maps.Map(document.getElementById('map'), {
                 center: pos,
                 zoom: 14,
@@ -139,6 +145,7 @@ function initMap() {
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
             map.addListener('rightclick', function (e) {
+                closeInfoWindow();
                 restaurantIsNew = true;
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
                 var marker = new google.maps.Marker({
@@ -182,7 +189,6 @@ function initMap() {
                     document.getElementById('autocompleteRestaurant').placeholder = 'Search for a Restaurant';
                 }
             }
-
 
             /*-----------------------------------------------------------------------------------
             uses the places api to search for places of type restaurant
@@ -463,7 +469,7 @@ function initMap() {
                 document.getElementById('name').textContent = place.name;
                 document.getElementById('address').textContent = place.vicinity;
                 document.getElementById('telephone').textContent = place.formatted_phone_number;
-                document.getElementById('website').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
+                document.getElementById('website').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
                 let reviewsDiv = document.getElementById('reviews');
                 let reviewHTML = '';
                 reviewsDiv.html = reviewHTML;
@@ -563,7 +569,7 @@ function initMap() {
             -------------------------------------------------------------------------------------*/
             function buildIWContent(place) {
                 document.getElementById('iw-icon').innerHTML = '<img class="photo" ' + 'src="' + createPhoto(place) + '"/>';
-                document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
+                document.getElementById('iw-url').innerHTML = '<b><a href="#restaurant-info">' + place.name + '</a></b>';
                 document.getElementById('iw-address').textContent = place.vicinity;
                 if (place.formatted_phone_number) {
                     document.getElementById('iw-phone').style.display = '';
@@ -591,7 +597,8 @@ function initMap() {
                         website = 'http://' + place.website + '/';
                     }
                     document.getElementById('iw-website').style.display = '';
-                    document.getElementById('iw-website').textContent = website;
+                    document.getElementById('iw-website').innerHTML = '<a href="' + place.url + '">' + place.website + '</a>';
+
                 } else {
                     document.getElementById('iw-website').style.display = 'none';
                 }
@@ -603,9 +610,7 @@ function initMap() {
                         document.getElementById('iw-open').style.display = 'none';
                     }
                 }
-                if (place.reviews) {
-                    document.getElementById('iw-reviews').textContent = 'See Reviews'
-                }
+                document.getElementById('iw-reviews').textContent = 'See Reviews'
             }
 
             /*-----------------------------------------------------------------------------------
@@ -670,6 +675,11 @@ function initMap() {
                 infoWindow.open(map, marker);
                 buildIWContent(place);
                 displayRestaurantInfo(place);
+
+            });
+
+            document.getElementById("back-to-map-button").addEventListener("click", function () {
+                restaurantInfoDiv.style.display = "none";
             });
             /*-----------------------------------------------------------------------------------*/
 

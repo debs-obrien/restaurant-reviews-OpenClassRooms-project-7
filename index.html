@@ -9,25 +9,14 @@
 
 </head>
 <body>
-<header>
+<header id="header">
     <div class="logo">
         <img src="img/logo.png" />
     </div>
     <h1>Restaurant Reviews</h1>
-    <div class="sort">
-        <label for="sort">Sort By</label>
-        <select name="sort" id="sort">
-            <option value="allStars">all Stars</option>
-            <option value="sortAsc">Highest Rating</option>
-            <option value="sortDesc">Lowest Rating</option>
-            <option value="sort3Star">1-3 stars</option>
-            <option value="sort4Star">4 star</option>
-            <option value="sort5Star">5 star</option>
-        </select>
-    </div>
+
 </header>
 <main>
-
     <div id="search">
         <div id="locationField">
             <input id="autocomplete-input" placeholder="Search by city" type="text" />
@@ -35,8 +24,28 @@
         </div>
     </div>
     <div class="map-and-list">
-        <div class="map-wrapper"><div id="map"></div></div>
+        <div class="map-wrapper"><div id="map">
+            <div class="loading">
+                <p>The map is loading. We are trying to find your location. Please be patient.
+                It will be worth it. :)</p>
+                <p>You will be able to view nearby restaurants</p>
+                <p>Search for restaurants</p>
+                <p>Add Restaurants by right clicking on the map</p>
+            </div>
+
+        </div></div>
         <div class="info-wrapper">
+            <div id="sort-options" class="sort">
+                <label for="sort">Sort By</label>
+                <select name="sort" id="sort">
+                    <option value="allStars">all Stars</option>
+                    <option value="sortAsc">Highest Rating</option>
+                    <option value="sortDesc">Lowest Rating</option>
+                    <option value="sort3Star">1-3 stars</option>
+                    <option value="sort4Star">4 star</option>
+                    <option value="sort5Star">5 star</option>
+                </select>
+            </div>
             <div id="listing">
                 <div id="results"></div>
                 <button id="more">More results</button>
@@ -80,13 +89,16 @@
         <div class="container">
             <div id="pano" class="street-view"></div>
             <div class="restaurant">
-                <h2 class="restaurant-name" id="name"></h2>
+                <div class="heading">
+                    <h2 class="restaurant-name" id="name"></h2>
+                    <button class="main-button" id="back-to-map-button" ><a href="#header">Back to Map</a></button>
+                </div>
                 <p class="restaurant-details" id="address"></p>
                 <p class="restaurant-details" id="telephone"></p>
                 <p class="restaurant-details" id="website"></p>
                 <div class="review-header">
                     <h3 class="title">Reviews</h3>
-                    <button id="add-review-button" ><a href="#add-review">Add a Review</a></button>
+                    <button class="main-button" id="add-review-button" ><a href="#add-review">Add a Review</a></button>
                 </div>
                 <div id="reviews"></div>
                 <div id="show-message"></div>

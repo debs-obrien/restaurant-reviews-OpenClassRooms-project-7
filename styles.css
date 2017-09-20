@@ -1,14 +1,23 @@
 body{
     font-family: "Open Sans", Roboto,Verdana, Geneva, sans-serif;
     background-color: #383838;
+    margin: 0;
 }
 p{
     font-size: 14px;
 }
 #map {
-    height: 100%;
+    height: calc(100vh - 114px);;
     width:100%;
     margin-right:40px;
+}
+.loading{
+    text-align: center;
+    width:600px;
+    margin:100px auto;
+}
+.loading p{
+    font-size:25px;
 }
 .map-and-list{
     display:flex;
@@ -28,7 +37,7 @@ p{
 
 #listing {
     width: 100%;
-    height: 600px;
+    height: calc(100vh - 156px);
     overflow: auto;
     cursor: pointer;
     overflow-x: hidden;
@@ -154,6 +163,7 @@ p{
 }
 .info-wrapper{
     min-width: 330px;
+    width: 330px;
     background-color: #fff;
 }
 .map-wrapper{
@@ -188,7 +198,13 @@ header h1{
 
 }
 .sort{
-    color: #fff;
+    background-color: #c8c9cb;
+    padding: 10px 0;
+    text-align: center;
+    color: #000;
+}
+.sort label{
+    margin-right: 10px;
 }
 #info-window{
     max-width:300px;
@@ -222,10 +238,10 @@ header h1{
 #iw-url a{
     color:#96bb1e;
 }
-#website a{
+#website a, #iw-website a{
     color:#eb853b;
 }
-#iw-url a, #website a{
+#iw-url a, #website a #iw-website a{
     text-decoration:none;
 }
 
@@ -233,7 +249,7 @@ header h1{
     color:#c2e254;
     text-decoration:underline;
 }
-#website a:hover, #add-review-button:hover{
+#website a:hover, .main-button:hover, #iw-website a:hover{
     color:#ffc527;
     text-decoration:underline;
 }
@@ -266,7 +282,7 @@ header h1{
     color: #fff;
 
 }
-#add-review-button{
+.main-button{
     background-color:#eb853b;
     color:#fff;
     border: none;
@@ -275,7 +291,7 @@ header h1{
     font-size: 11px;
     height: 40px;
 }
-#add-review-button a{
+.main-button a{
     text-decoration: none;
     color:#fff;
 }
@@ -323,12 +339,22 @@ header h1{
 #iw-reviews{
     color: #eb853b;
     text-decoration:none;
+    font-size: 16px;
+    text-align: center;
+    display: block;
 }
 #iw-reviews:hover{
     color:#ffc527;
     text-decoration:underline;
 }
-
+.heading{
+    display:flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+.heading h2{
+    margin:0;
+}
 
 /* add new restaurant form info window */
 #form-add-restaurant{
