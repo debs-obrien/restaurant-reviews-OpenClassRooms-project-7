@@ -139,13 +139,6 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
-            google.maps.event.addListener(map, "rightclick", function (event) {
-                var lat = event.latLng.lat();
-                var lng = event.latLng.lng();
-                // populate yor box/field with lat, lng
-                console.log("Lat=" + lat + "; Lng=" + lng);
-            });
-
             map.addListener('rightclick', function (e) {
                 restaurantIsNew = true;
                 var latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
@@ -202,6 +195,18 @@ function initMap() {
             }, callback);
 
             function callback(results, status) {
+                const script = document.createElement('script');
+                script.src = 'restaurants.js';
+                document.getElementsByTagName('head')[0].appendChild(script);
+                window.eqfeed_callback = function (results) {
+                    console.log(results.results[0]);
+                    results = results.results;
+                    myRestaurants = [];
+                    for (let i = 0; i < results.length; i++) {
+                        myRestaurants.push(results[i]);
+                    }
+
+                };
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     search()
                 }
@@ -218,18 +223,10 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
-                        const script = document.createElement('script');
-                        script.src = 'restaurants.js';
-                        document.getElementsByTagName('head')[0].appendChild(script);
-                        window.eqfeed_callback = function (results) {
-                            console.log(results.results[0]);
-                            results = results.results;
-                            myRestaurants = [];
-                            for (let i = 0; i < results.length; i++) {
-                                myRestaurants.push(results[i]);
-                                setTimeout(dropMarker(i), i * 100);
-                            }
-                        };
+                        for (let i = 0; i < myRestaurants.length; i++) {
+                            setTimeout(dropMarker(i), i * 100);
+                        }
+
                         googleRestaurants = [];
                         for (let i = 0; i < results.length; i++) {
                             googleRestaurants.push(results[i]);
