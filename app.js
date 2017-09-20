@@ -230,11 +230,12 @@ function initMap() {
                         clearResults();
                         clearMarkers();
 
-
-
-                        googleRestaurants = [];
+                        //googleRestaurants = [];
+                        //allRestaurants = [];
+                        //allRestaurants = googleRestaurants.concat(myRestaurants);
+                        //allRestaurants = googleRestaurants;
                         for (let i = 0; i < results.length; i++) {
-                            googleRestaurants.push(results[i]);
+                            allRestaurants.push(results[i]);
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
                                 placeId: results[i].id,
@@ -249,10 +250,33 @@ function initMap() {
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
-                            setTimeout(dropMarker(i), i * 100);
-                            addResultList(results[i], i);
-                            markers[i].placeResult = results[i];
+
+                            if (sort3Star) {
+                                if (Math.round(allRestaurants[i].rating) <= 3) {
+                                    addResultsAndMarkers(results, i);
+                                }
+                            } else if (sort4Star) {
+                                if (Math.round(allRestaurants[i].rating) === 4) {
+                                    addResultsAndMarkers(results, i);
+                                }
+                            } else if (sort5Star) {
+                                if (Math.round(allRestaurants[i].rating) === 5) {
+                                    addResultsAndMarkers(results, i);
+                                }
+                            } else {
+                                if (sortAsc) {
+                                    results.sort(function (a, b) {
+                                        return b.rating - a.rating;
+                                    });
+                                } else if (sortDesc) {
+                                    results.sort(function (a, b) {
+                                        return a.rating - b.rating;
+                                    });
+                                }
+                                addResultsAndMarkers(results, i);
+                            }
                         }
+
                         /*for (let i = 0; i < myRestaurants.length; i++) {
                             setTimeout(dropMarker(i), i * 100);
                             markers[i] = new google.maps.Marker({
@@ -294,9 +318,10 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             calls the sort by function, resets the values, concats the two arrays and sorts array
             -------------------------------------------------------------------------------------*/
-            function sortResults() {
+     /*       function sortResults() {
                 allRestaurants = [];
                 allRestaurants = googleRestaurants.concat(myRestaurants);
+                allRestaurants = googleRestaurants;
                 clearResults();
                 clearMarkers();
 
@@ -309,7 +334,6 @@ function initMap() {
                         zIndex: 52,
                         id: i,
                     });
-                    console.log(allRestaurants[i].id)
                     // If the user clicks a restaurant marker, show the details of that restaurant
                     google.maps.event.addListener(markers[i], 'click', showInfoWindowAll);
                     google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallAll);
@@ -347,7 +371,7 @@ function initMap() {
 
                 }
 
-            }
+            }*/
 
             /*-----------------------------------------------------------------------------------
             event listener for sort by by
@@ -356,32 +380,38 @@ function initMap() {
                 if (sortBy.value === 'sortAsc') {
                     restSort();
                     sortAsc = true;
-                    sortResults();
+                    //sortResults();
+                    search();
 
                 } else if (sortBy.value === 'sortDesc') {
                     restSort();
                     sortDesc = true;
-                    sortResults();
+                    //sortResults();
+                    search();
                 }
                 else if (sortBy.value === 'sort4Star') {
                     restSort();
                     sort4Star = true;
-                    sortResults();
+                    //sortResults();
+                    search();
                 }
                 else if (sortBy.value === 'sort3Star') {
                     restSort();
                     sort3Star = true;
-                    sortResults();
+                    //sortResults();
+                    search();
                 }
                 else if (sortBy.value === 'sort5Star') {
                     restSort();
                     sort5Star = true;
-                    sortResults();
+                    //sortResults();
+                    search();
                 }
                 else if (sortBy.value === 'allStars') {
                     restSort();
                     allStars = true;
-                    sortResults();
+                    //sortResults();
+                    search();
                 }
             });
 
@@ -599,9 +629,9 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             adds the results and the markers
             -------------------------------------------------------------------------------------*/
-            function addResultsAndMarkers(i){
-                addResultList(allRestaurants[i], i);
-                markers[i].placeResult = allRestaurants[i];
+            function addResultsAndMarkers(array, i){
+                addResultList(array[i], i);
+                markers[i].placeResult = array[i];
                 setTimeout(dropMarker(i), i * 100);
             }
 
