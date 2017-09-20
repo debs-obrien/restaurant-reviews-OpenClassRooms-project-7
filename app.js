@@ -4,6 +4,7 @@ var infoWindow;
 let infoWindowSmall;
 let infoWindowNew;
 var markers = [];
+let markers2 = [];
 var autocomplete;
 var autocompleteRestaurant;
 var hostnameRegexp = new RegExp('^https?://.+?/');
@@ -234,17 +235,17 @@ function initMap() {
                         for (let i = 0; i < results.length; i++) {
                             googleRestaurants.push(results[i]);
                         }
+
                         allRestaurants = [];
                         allRestaurants = googleRestaurants.concat(myRestaurants);
-                        //allRestaurants = googleRestaurants;
-                        /*for (let i = 0; i < googleRestaurants.length; i++) {
+                        for (let i = 0; i < results.length; i++) {
                             markers[i] = new google.maps.Marker({
-                                position: googleRestaurants[i].geometry.location,
-                                placeId: googleRestaurants[i].id,
+                                position: results[i].geometry.location,
+                                placeId: results[i].id,
                                 //animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(googleRestaurants[i]),
                                 zIndex: 52,
-                                id: i,
+                                //id: i,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
@@ -254,56 +255,56 @@ function initMap() {
 
 
                             if (sort3Star) {
-                                if (Math.round(googleRestaurants[i].rating) <= 3) {
-                                    addResultsAndMarkers(googleRestaurants, i);
+                                if (Math.round(results[i].rating) <= 3) {
+                                    addResultsAndMarkers(results, i);
                                 }
                             } else if (sort4Star) {
-                                if (Math.round(googleRestaurants[i].rating) === 4) {
-                                    addResultsAndMarkers(googleRestaurants, i);
+                                if (Math.round(results[i].rating) === 4) {
+                                    addResultsAndMarkers(results, i);
                                 }
                             } else if (sort5Star) {
-                                if (Math.round(googleRestaurants[i].rating) === 5) {
-                                    addResultsAndMarkers(googleRestaurants, i);
+                                if (Math.round(results[i].rating) === 5) {
+                                    addResultsAndMarkers(results, i);
                                 }
                             } else {
                                 if (sortAsc) {
-                                    googleRestaurants.sort(function (a, b) {
+                                    results.sort(function (a, b) {
                                         return b.rating - a.rating;
                                     });
                                 } else if (sortDesc) {
-                                    googleRestaurants.sort(function (a, b) {
+                                    results.sort(function (a, b) {
                                         return a.rating - b.rating;
                                     });
                                 }
-                                addResultsAndMarkers(googleRestaurants, i);
+                                addResultsAndMarkers(results, i);
                             }
-                        }*/
+                        }
 
-                    /*    for (let i = 0; i < myRestaurants.length; i++) {
-                            markers[i] = new google.maps.Marker({
+                       for (let i = 0; i < myRestaurants.length; i++) {
+                            markers[googleRestaurants.length +i] = new google.maps.Marker({
                                 position: myRestaurants[i].geometry.location,
                                 placeId: myRestaurants[i].id,
                                 //animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(myRestaurants[i]),
                                 zIndex: 52,
-                                id: i,
+                                id: myRestaurants[i].id,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            google.maps.event.addListener(markers[i], 'click', showInfoWindowMy);
-                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallMy);
-                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
+                            google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
+                            google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
                             if (sort3Star) {
                                 if (Math.round(myRestaurants[i].rating) <= 3) {
-                                    addResultsAndMarkers(myRestaurants, i);
+                                    addResultsAndMarkers2(googleRestaurants.length+i, myRestaurants, i);
                                 }
                             } else if (sort4Star) {
                                 if (Math.round(myRestaurants[i].rating) === 4) {
-                                    addResultsAndMarkers(myRestaurants, i);
+                                    addResultsAndMarkers2(googleRestaurants.length+i, myRestaurants, i);
                                 }
                             } else if (sort5Star) {
                                 if (Math.round(myRestaurants[i].rating) === 5) {
-                                    addResultsAndMarkers(myRestaurants, i);
+                                    addResultsAndMarkers2(googleRestaurants.length+i, myRestaurants, i);
                                 }
                             } else {
                                 if (sortAsc) {
@@ -315,10 +316,12 @@ function initMap() {
                                         return a.rating - b.rating;
                                     });
                                 }
-                                addResultsAndMarkers(myRestaurants, i);
+                                addResultsAndMarkers2(googleRestaurants.length+i, myRestaurants, i);
                             }
-                        }*/
-                        for (let i = 0; i < allRestaurants.length; i++) {
+                        }
+
+
+                      /*  for (let i = 0; i < allRestaurants.length; i++) {
                             markers[i] = new google.maps.Marker({
                                 position: allRestaurants[i].geometry.location,
                                 placeId: allRestaurants[i].id,
@@ -356,7 +359,7 @@ function initMap() {
                                 }
                                 addResultsAndMarkers(allRestaurants, i);
                             }
-                        }
+                        }*/
 
                         /*let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
@@ -705,6 +708,11 @@ function initMap() {
                 addResultList(array[i], i);
                 markers[i].placeResult = array[i];
                 setTimeout(dropMarker(i), i * 100);
+            }
+            function addResultsAndMarkers2(markersI, array, i){
+                addResultList(array[i], markersI);
+                markers[markersI].placeResult = array[i];
+                setTimeout(dropMarker(markersI), i * 100);
             }
 
             /*-----------------------------------------------------------------------------------
