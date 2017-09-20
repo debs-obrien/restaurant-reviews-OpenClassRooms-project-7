@@ -18,7 +18,7 @@ eqfeed_callback({
             "opening_hours": {
                 "open_now": true
             },
-            "rating": 4.6,
+            "rating": '4',
             "reviews": [{
                 "name": "Debbie",
                 "rating":5,
