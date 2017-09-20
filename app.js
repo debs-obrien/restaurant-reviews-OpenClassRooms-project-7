@@ -229,20 +229,50 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
-                        for(let i = 0; i < results.length; i++) {
 
-                        }
-                        for (let i = 0; i < myRestaurants.length; i++) {
-                            setTimeout(dropMarker(i), i * 100);
-                        }
+
 
                         googleRestaurants = [];
                         for (let i = 0; i < results.length; i++) {
                             googleRestaurants.push(results[i]);
+                            markers[i] = new google.maps.Marker({
+                                position: results[i].geometry.location,
+                                placeId: results[i].id,
+                                //animation: google.maps.Animation.DROP,
+                                icon: createMarkerStars(results[i]),
+                                zIndex: 52,
+                                id: i,
+                            });
+                            // If the user clicks a restaurant marker, show the details of that restaurant
+                            google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
+                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            google.maps.event.addListener(map, "click", closeInfoWindow);
+
                             setTimeout(dropMarker(i), i * 100);
+                            addResultList(results[i], i);
+                            markers[i].placeResult = results[i];
+                        }
+                        for (let i = 0; i < myRestaurants.length; i++) {
+                            setTimeout(dropMarker(i), i * 100);
+                            markers[i] = new google.maps.Marker({
+                                position: myRestaurants[i].geometry.location,
+                                placeId: myRestaurants[i].id,
+                                //animation: google.maps.Animation.DROP,
+                                icon: createMarkerStars(myRestaurants[i]),
+                                zIndex: 52,
+                                id: googleRestaurants.length +i,
+                            });
+                            // If the user clicks a restaurant marker, show the details of that restaurant
+                            google.maps.event.addListener(markers[i], 'click', showInfoWindowAll);
+                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallAll);
+                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            google.maps.event.addListener(map, "click", closeInfoWindow);
+                            setTimeout(dropMarker(i), i * 100);
+                            addResultList(myRestaurants[i], i);
+                            markers[i].placeResult = myRestaurants[i];
                         }
 
-                        sortResults();
                         /*let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
 
@@ -279,7 +309,7 @@ function initMap() {
                         zIndex: 52,
                         id: i,
                     });
-
+                    console.log(allRestaurants[i].id)
                     // If the user clicks a restaurant marker, show the details of that restaurant
                     google.maps.event.addListener(markers[i], 'click', showInfoWindowAll);
                     google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallAll);
@@ -425,6 +455,34 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             Shows the info window with details of the restaurant
             -------------------------------------------------------------------------------------*/
+            function showInfoWindow() {
+                closeInfoWindowSmall();
+                let marker = this;
+                places.getDetails({
+                    placeId: marker.placeResult.place_id
+                }, function(place, status) {
+                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                        return;
+                    }
+                    infoWindow.open(map, marker);
+                    buildIWContent(place);
+                    displayRestaurantInfo(place);
+                });
+            }
+
+            function showInfoWindowSmall() {
+                closeInfoWindow();
+                let marker = this;
+                places.getDetails({
+                    placeId: marker.placeResult.place_id
+                }, function(place, status) {
+                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
+                        return;
+                    }
+                    infoWindowSmall.open(map, marker);
+                    buildIWContentSmall(place);
+                });
+            }
             function showInfoWindowAll() {
                 closeInfoWindowSmall();
                 let marker = this;
