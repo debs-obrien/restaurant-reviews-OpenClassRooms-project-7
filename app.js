@@ -229,6 +229,9 @@ function initMap() {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         clearResults();
                         clearMarkers();
+                        for(let i = 0; i < results.length; i++) {
+
+                        }
                         for (let i = 0; i < myRestaurants.length; i++) {
                             setTimeout(dropMarker(i), i * 100);
                         }
@@ -270,6 +273,7 @@ function initMap() {
                 for (let i = 0; i < allRestaurants.length; i++) {
                     markers[i] = new google.maps.Marker({
                         position: allRestaurants[i].geometry.location,
+                        placeId: allRestaurants[i].id,
                         //animation: google.maps.Animation.DROP,
                         icon: createMarkerStars(allRestaurants[i]),
                         zIndex: 52,
@@ -464,6 +468,7 @@ function initMap() {
             displays extra info below when restaurant is clicked
             -------------------------------------------------------------------------------------*/
             function displayRestaurantInfo(place) {
+                console.log(place)
                 showTheForm();
                 restaurantInfoDiv.style.display = "block";
                 document.getElementById('name').textContent = place.name;
@@ -472,8 +477,9 @@ function initMap() {
                 document.getElementById('website').innerHTML = '<b><a href=' + place.url + '>' + place.name + '</a></b>';
                 let reviewsDiv = document.getElementById('reviews');
                 let reviewHTML = '';
-                reviewsDiv.html = reviewHTML;
+                reviewsDiv.innerHTML = reviewHTML;
                 if (place.reviews) {
+                    console.log('has reviews');
                     if (place.reviews.length > 0) {
                         for (let i = 0; i < place.reviews.length; i += 1) {
                             let review = place.reviews[i];
@@ -492,12 +498,11 @@ function initMap() {
                             reviewHTML +=  ` </h3>
                                                 <p> ${place.reviews[i].text} </p>
                                             </div>`;
+                            reviewsDiv.innerHTML = reviewHTML;
                         }
-                    } else {
-                        reviewHTML += '';
                     }
-                    reviewsDiv.innerHTML = reviewHTML;
                 }
+
                 /*-----------------------------------------------------------------------------------
                 adds the street view functionality
                 -------------------------------------------------------------------------------------*/
