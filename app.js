@@ -253,7 +253,7 @@ function initMap() {
                             addResultList(results[i], i);
                             markers[i].placeResult = results[i];
                         }
-                        for (let i = 0; i < myRestaurants.length; i++) {
+                        /*for (let i = 0; i < myRestaurants.length; i++) {
                             setTimeout(dropMarker(i), i * 100);
                             markers[i] = new google.maps.Marker({
                                 position: myRestaurants[i].geometry.location,
@@ -261,7 +261,7 @@ function initMap() {
                                 //animation: google.maps.Animation.DROP,
                                 icon: createMarkerStars(myRestaurants[i]),
                                 zIndex: 52,
-                                id: googleRestaurants.length +i,
+                                id: i,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
                             google.maps.event.addListener(markers[i], 'click', showInfoWindowAll);
@@ -271,7 +271,7 @@ function initMap() {
                             setTimeout(dropMarker(i), i * 100);
                             addResultList(myRestaurants[i], i);
                             markers[i].placeResult = myRestaurants[i];
-                        }
+                        }*/
 
                         /*let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
