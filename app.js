@@ -430,6 +430,20 @@ function initMap() {
             }
 
             /*-----------------------------------------------------------------------------------
+            adds the results and the markers
+            -------------------------------------------------------------------------------------*/
+            function addResultsAndMarkers(i){
+                addResultList(allRestaurants[i], i);
+                markers[i].placeResult = allRestaurants[i];
+                setTimeout(dropMarker(i), i * 100);
+            }
+
+            function callSort(sortedBy){
+                restSort();
+                sortedBy = true;
+                sortResults();
+            }
+            /*-----------------------------------------------------------------------------------
             calls the sort by function
             -------------------------------------------------------------------------------------*/
             function sortResults() {
@@ -441,7 +455,7 @@ function initMap() {
                 for (let i = 0; i < allRestaurants.length; i++) {
                     markers[i] = new google.maps.Marker({
                         position: allRestaurants[i].geometry.location,
-                        //animation: google.maps.Animation.DROP,
+                        animation: google.maps.Animation.DROP,
                         icon: createMarkerStars(allRestaurants[i]),
                         zIndex: 52,
                         id: i,
@@ -452,19 +466,19 @@ function initMap() {
                     google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallAll);
                     google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                     google.maps.event.addListener(map, "click", closeInfoWindow);
-                    setTimeout(dropMarker(i), i * 100);
+
 
                     if (sort3Star) {
                         if (Math.round(allRestaurants[i].rating) <= 3) {
-                            addResultList(allRestaurants[i], i);
+                            addResultsAndMarkers(i);
                         }
                     } else if (sort4Star) {
                         if (Math.round(allRestaurants[i].rating) === 4) {
-                            addResultList(allRestaurants[i], i);
+                            addResultsAndMarkers(i);
                         }
                     } else if (sort5Star) {
                         if (Math.round(allRestaurants[i].rating) === 5) {
-                            addResultList(allRestaurants[i], i);
+                            addResultsAndMarkers(i);
                             if (allRestaurants[i] === 0) {
                                 resultsDiv.innerHTML = 'Sorry no 5 star Hotels. Filter again!!'
                             }
@@ -479,23 +493,19 @@ function initMap() {
                                 return a.rating - b.rating;
                             });
                         }
-                        addResultList(allRestaurants[i], i);
+                        addResultsAndMarkers(i);
                     }
-                    markers[i].placeResult = allRestaurants[i];
                 }
             }
 
-            function callSort(sortedBy){
-                restSort();
-                sortedBy = true;
-                sortResults();
-            }
+
 
             sortBy.addEventListener('change', function () {
                 if (sortBy.value === 'ratingAsc') {
                     restSort();
                     sortAsc = true;
                     sortResults();
+                    callSort(sortAsc);
                 } else if (sortBy.value === 'ratingDesc') {
                     restSort();
                     sortDesc = true;
