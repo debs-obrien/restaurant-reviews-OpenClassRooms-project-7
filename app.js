@@ -139,7 +139,7 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             right clicking could be used to add new restaurant
             -------------------------------------------------------------------------------------*/
-            google.maps.event.addListener(map, "rightclick", function(event) {
+            google.maps.event.addListener(map, "rightclick", function (event) {
                 var lat = event.latLng.lat();
                 var lng = event.latLng.lng();
                 // populate yor box/field with lat, lng
@@ -190,14 +190,11 @@ function initMap() {
             }
 
 
-
             /*-----------------------------------------------------------------------------------
             uses the places api to search for places of type restaurant
             -------------------------------------------------------------------------------------*/
             var places = new google.maps.places.PlacesService(map);
             var service = new google.maps.places.PlacesService(map);
-
-
             service.nearbySearch({
                 location: pos,
                 radius: 500,
@@ -211,7 +208,7 @@ function initMap() {
             }
 
             function search() {
-                allRestaurants=[];
+                allRestaurants = [];
                 let search = {
                     bounds: map.getBounds(),
                     type: ['restaurant']
@@ -227,54 +224,18 @@ function initMap() {
                         window.eqfeed_callback = function (results) {
                             console.log(results.results[0]);
                             results = results.results;
-                            myRestaurants=[];
+                            myRestaurants = [];
                             for (let i = 0; i < results.length; i++) {
                                 myRestaurants.push(results[i]);
                                 setTimeout(dropMarker(i), i * 100);
-                                /*markers[i] = new google.maps.Marker({
-                                    position: results[i].geometry.location,
-                                    //animation: google.maps.Animation.DROP,
-                                    icon: createMarkerStars(results[i]),
-                                    zIndex: 52,
-                                    id: i,
-                                });
-                                // If the user clicks a restaurant marker, show the details of that restaurant
-                                google.maps.event.addListener(markers[i], 'click', showInfoWindowJSON);
-                                google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmallJSON);
-                                google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
-                                google.maps.event.addListener(map, "click", closeInfoWindow);
-                                setTimeout(dropMarker(i), i * 100);
-                                addResultList(results[i], i);
-                                markers[i].placeResult = results[i];*/
                             }
                         };
-
-                        googleRestaurants=[];
+                        googleRestaurants = [];
                         for (let i = 0; i < results.length; i++) {
                             googleRestaurants.push(results[i]);
                             setTimeout(dropMarker(i), i * 100);
                         }
-                        /*for (let i = 0; i < googleRestaurants.length; i++) {
-                            markers[i] = new google.maps.Marker({
-                                position: googleRestaurants[i].geometry.location,
-                                //animation: google.maps.Animation.DROP,
-                                icon: createMarkerStars(googleRestaurants[i]),
-                                zIndex: 52
-                            });
-
-                            // If the user clicks a restaurant marker, show the details of that restaurant
-                            google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
-                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
-                            google.maps.event.addListener(map, "click", closeInfoWindow);
-
-                            setTimeout(dropMarker(i), i * 100);
-                            addResultList(results[i], i);
-
-                            markers[i].placeResult = results[i];
-                        }*/
                         sortResults();
-
 
                         let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
@@ -287,9 +248,7 @@ function initMap() {
                         } else {
                             moreButton.style.display = '';
                         }
-
                     }
-
                 });
             }
 
@@ -331,12 +290,6 @@ function initMap() {
                 listDiv.onclick = function () {
                     google.maps.event.trigger(markers[i], 'click');
                 };
-                /*listDiv.onmousemove = function() {
-                    google.maps.event.trigger(markers[i], 'mouseover', showInfoWindowSmall);
-                };
-                listDiv.mouseout = function() {
-                    google.maps.event.trigger(markers[i], 'mouseout', closeInfoWindowSmall);
-                };*/
                 let details = `<div class="placeIcon"><img src ="${createPhoto(result)}" /></div>
                                 <div class="placeDetails">
                                 <div class="name">${result.name}</div>
@@ -367,31 +320,6 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             Shows the info window with details of the restaurant
             -------------------------------------------------------------------------------------*/
-            function showInfoWindow() {
-                closeInfoWindowSmall();
-                let marker = this;
-
-                places.getDetails({
-                    placeId: marker.placeResult.place_id
-                }, function (place, status) {
-                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                        return;
-                    }
-                    infoWindow.open(map, marker);
-                    buildIWContent(place);
-                    displayRestaurantInfo(place);
-                });
-            }
-
-            function showInfoWindowJSON() {
-                closeInfoWindowSmall();
-                let marker = this;
-                infoWindow.open(map, marker);
-                console.log(marker.id);
-                console.log(myRestaurants[marker.id]);
-                buildIWContent(myRestaurants[marker.id]);
-                displayRestaurantInfo(myRestaurants[marker.id]);
-            }
             function showInfoWindowAll() {
                 closeInfoWindowSmall();
                 let marker = this;
@@ -401,39 +329,12 @@ function initMap() {
                 buildIWContent(allRestaurants[marker.id]);
                 displayRestaurantInfo(allRestaurants[marker.id]);
             }
-
-            function showInfoWindowSmall() {
-                closeInfoWindow();
-                let marker = this;
-
-                places.getDetails({
-                    placeId: marker.placeResult.place_id
-                }, function (place, status) {
-                    if (status !== google.maps.places.PlacesServiceStatus.OK) {
-                        return;
-                    }
-                    infoWindowSmall.open(map, marker);
-                    buildIWContentSmall(place);
-                });
-
-
-            }
-
-            function showInfoWindowSmallJSON() {
-                closeInfoWindowSmall();
-                let marker = this;
-
-                infoWindowSmall.open(map, marker);
-                buildIWContentSmall(myRestaurants[marker.id]);
-            }
             function showInfoWindowSmallAll() {
                 closeInfoWindowSmall();
                 let marker = this;
-
                 infoWindowSmall.open(map, marker);
                 buildIWContentSmall(allRestaurants[marker.id]);
             }
-
             function addRestaurantInfoWindow() {
                 let marker = this;
                 if (restaurantIsNew) {
@@ -454,15 +355,12 @@ function initMap() {
             function closeInfoWindow() {
                 infoWindow.close(map, marker);
             }
-
             function closeInfoWindowSmall() {
                 infoWindowSmall.close(map, marker);
             }
-
             function closeInfoWindowNew() {
                 infoWindowNew.close(map, marker);
             }
-
             /*-----------------------------------------------------------------------------------
             displays extra info below when restaurant is clicked
             -------------------------------------------------------------------------------------*/
@@ -476,7 +374,6 @@ function initMap() {
                 let reviewsDiv = document.getElementById('reviews');
                 let reviewHTML = '';
                 reviewsDiv.html = reviewHTML;
-                console.log(place);
                 if (place.reviews) {
                     if (place.reviews.length > 0) {
                         for (let i = 0; i < place.reviews.length; i += 1) {
@@ -538,7 +435,7 @@ function initMap() {
             /*-----------------------------------------------------------------------------------
             calls the sort by function
             -------------------------------------------------------------------------------------*/
-            function sortResults(){
+            function sortResults() {
                 allRestaurants = [];
                 allRestaurants = googleRestaurants.concat(myRestaurants);
                 clearResults();
@@ -560,40 +457,42 @@ function initMap() {
                     google.maps.event.addListener(map, "click", closeInfoWindow);
                     setTimeout(dropMarker(i), i * 100);
 
-                        if (sort3Star) {
-                            if (Math.round(allRestaurants[i].rating) <= 3) {
-                                addResultList(allRestaurants[i], i);
-                            }
-                        } else if (sort4Star) {
-                            if (Math.round(allRestaurants[i].rating) === 4) {
-                                addResultList(allRestaurants[i], i);
-                            }
-
-                        } else if (sort5Star) {
-                            if (Math.round(allRestaurants[i].rating) === 5) {
-                                addResultList(allRestaurants[i], i);
-                                if (allRestaurants[i] === 0) {
-                                    resultsDiv.innerHTML = 'Sorry no 5 star Hotels. Filter again!!'
-                                }
-                            }
-                        } else {
-                            if (sortAsc) {
-                                allRestaurants.sort(function (a, b) {
-                                    return b.rating - a.rating;
-                                });
-                            } else if (sortDesc) {
-                                allRestaurants.sort(function (a, b) {
-                                    return a.rating - b.rating;
-                                });
-                            }
+                    if (sort3Star) {
+                        if (Math.round(allRestaurants[i].rating) <= 3) {
                             addResultList(allRestaurants[i], i);
                         }
-                        markers[i].placeResult = allRestaurants[i];
-
-
+                    } else if (sort4Star) {
+                        if (Math.round(allRestaurants[i].rating) === 4) {
+                            addResultList(allRestaurants[i], i);
+                        }
+                    } else if (sort5Star) {
+                        if (Math.round(allRestaurants[i].rating) === 5) {
+                            addResultList(allRestaurants[i], i);
+                            if (allRestaurants[i] === 0) {
+                                resultsDiv.innerHTML = 'Sorry no 5 star Hotels. Filter again!!'
+                            }
+                        }
+                    } else {
+                        if (sortAsc) {
+                            allRestaurants.sort(function (a, b) {
+                                return b.rating - a.rating;
+                            });
+                        } else if (sortDesc) {
+                            allRestaurants.sort(function (a, b) {
+                                return a.rating - b.rating;
+                            });
+                        }
+                        addResultList(allRestaurants[i], i);
+                    }
+                    markers[i].placeResult = allRestaurants[i];
                 }
             }
 
+            function callSort(sortedBy){
+                restSort();
+                sortedBy = true;
+                sortResults();
+            }
 
             sortBy.addEventListener('change', function () {
                 if (sortBy.value === 'ratingAsc') {
