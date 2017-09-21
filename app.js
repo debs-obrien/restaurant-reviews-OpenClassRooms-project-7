@@ -4,7 +4,6 @@ var infoWindow;
 let infoWindowSmall;
 let infoWindowNew;
 var markers = [];
-let markers2 = [];
 var autocomplete;
 var autocompleteRestaurant;
 var hostnameRegexp = new RegExp('^https?://.+?/');
@@ -23,10 +22,12 @@ let myRestaurants = [];
 let googleRestaurants = [];
 let allRestaurants = [];
 let restaurantInfoDiv = document.getElementById('restaurant-info');
+let seeReviewsLink = document.getElementById('iw-reviews');
+//let seeReviewsLink2 = document.getElementById('iw-reviews');
 let searchDiv = document.getElementById('search');
 let sortOptionsDiv = document.getElementById('sort-options');
 sortOptionsDiv.style.display = "none";
-restaurantInfoDiv.style.display = "none";
+//restaurantInfoDiv.style.display = "none";
 searchDiv.style.display = "none";
 let sortBy = document.getElementById('sort');
 let form = document.getElementById('form-add-restaurant');
@@ -379,6 +380,10 @@ function initMap() {
                 });
             }
 
+            /*seeReviewsLink.addEventListener('click', function () {
+                restaurantInfoDiv.style.display = "block";
+            });
+*/
             /*-----------------------------------------------------------------------------------
             event listener for sort by by
             -------------------------------------------------------------------------------------*/
@@ -732,7 +737,7 @@ function initMap() {
             Builds the new Restaurant info Window
             -------------------------------------------------------------------------------------*/
             function buildResDetailContent(marker) {
-
+                restaurantInfoDiv.style.display = "block";
                 form.style.padding = '10px';
                 form.innerHTML = `
                     <h3 class="add-res-heading">Add A Restaruant</h3>
@@ -793,9 +798,9 @@ function initMap() {
 
             });
 
-            document.getElementById("back-to-map-button").addEventListener("click", function () {
+            /*document.getElementById("back-to-map-button").addEventListener("click", function () {
                 restaurantInfoDiv.style.display = "none";
-            });
+            });*/
             /*-----------------------------------------------------------------------------------*/
 
         }, function () {

@@ -9,7 +9,7 @@ eqfeed_callback({
                     "lng": 2.6307320594787598
                 }
             },
-            "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
             "id": 0,
             "name": "Debbie\'s Restaurant",
             "formatted_phone_number": "6677666",
@@ -38,7 +38,7 @@ eqfeed_callback({
                     "lng": 2.632373571395874
                 }
             },
-            "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
             "id": 1,
             "name": "Debbie\'s Restaurant 2",
             "formatted_phone_number": "66776662",
@@ -68,7 +68,7 @@ eqfeed_callback({
                     "lng": 2.632770538330078
                 }
             },
-            "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
             "id": 2,
             "name": "Debbie\'s Restaurant 3",
             "formatted_phone_number": "6677666",
@@ -98,7 +98,7 @@ eqfeed_callback({
                     "lng": 2.638521194458008
                 }
             },
-            "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+            "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
             "id": 3,
             "name": "Debbie\'s Restaurant 4",
             "formatted_phone_number": "66776664",
