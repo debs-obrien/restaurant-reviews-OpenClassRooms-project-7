@@ -266,7 +266,7 @@ function initMap() {
                                 }
                             } else if (sort4Star) {
                                 if (Math.round(results[i].rating) === 4) {
-                                    addResultsAndMarkers(results, i);
+                                    addResultsAndMarkers(i, results, i);
                                 }
                             } else if (sort5Star) {
                                 if (Math.round(results[i].rating) === 5) {
@@ -285,7 +285,6 @@ function initMap() {
                                 addResultsAndMarkers(i, results, i);
                             }
                         }
-                        //if position is palma show my restaurants
                             for (let i = 0; i < myRestaurants.length; i++) {
                                 markers[googleRestaurants.length +i] = new google.maps.Marker({
                                     position: myRestaurants[i].geometry.location,
@@ -328,7 +327,7 @@ function initMap() {
                                 }
 
                         }
-                        
+
                         /*let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
 
