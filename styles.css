@@ -288,6 +288,7 @@ header h1{
     padding: 10px;
     font-size: 11px;
     height: 40px;
+    min-width: 90px;
 }
 .main-button a{
     text-decoration: none;
@@ -317,6 +318,10 @@ header h1{
 #iw-icon-small .gm-style .photo{
     width:50px;
     height:35px;
+}
+#iw-icon .photo{
+    max-width: 300px;
+    max-height: 200px;
 }
 #info-content-small .photo{
     height: 35px;

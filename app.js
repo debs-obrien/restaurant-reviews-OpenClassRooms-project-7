@@ -253,10 +253,10 @@ function initMap() {
                                 zIndex: 52,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            if (!(navigator.userAgent).indexOf("Mobile")){
+                            //if (!(navigator.userAgent).indexOf("Mobile")){
                                 google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
                                 google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
-                            }
+                           // }
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
@@ -295,10 +295,10 @@ function initMap() {
                                     id: myRestaurants[i].id,
                                 });
                                 // If the user clicks a restaurant marker, show the details of that restaurant
-                                if (!(navigator.userAgent).indexOf("Mobile")){
+                                //if (!(navigator.userAgent).indexOf("Mobile")){
                                     google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
                                     google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
-                                }
+                                //}
                                 google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
                                 google.maps.event.addListener(map, "click", closeInfoWindow);
                                 if (sort3Star) {
@@ -442,8 +442,8 @@ function initMap() {
                     photo = place.icon;
                 } else {
                     photo = photos[0].getUrl({
-                        'maxWidth': 300,
-                        'maxHeight': 170
+                        'maxWidth': 600,
+                        'maxHeight': 400
                     });
                 }
                 return photo;
@@ -581,7 +581,7 @@ function initMap() {
                         });
                         panorama.setVisible(true);
                     } else {
-                        console.error('Street View data not found for this location.');
+                        panorama.innerHTML = '<img class="photo-big" ' + 'src="' + createPhoto(place) + '"/>';
                     }
                 }
             }
