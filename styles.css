@@ -106,7 +106,7 @@ p{
 }
 #rating {
     font-size: 13px;
-    font-family: Arial Unicode MS;
+    font-family: Arial Unicode MS Verdana;
 }
 .iw_table_row {
     height: 18px;
@@ -278,9 +278,6 @@ header h1{
     height: 20px;
     border-radius: unset;
     border: none;
-    background-color: #eb853b;
-    color: #fff;
-
 }
 .main-button{
     background-color:#eb853b;
@@ -342,6 +339,7 @@ header h1{
     font-size: 16px;
     text-align: center;
     display: block;
+    padding-top: 10px;
 }
 #iw-reviews:hover{
     color:#ffc527;
@@ -375,8 +373,6 @@ header h1{
     font-size: 12px;
     border-radius: unset;
     border: none;
-    background-color: #eb853b;
-    color: #fff;
 }
 .add-res-heading{
     color: #96bb1e;
@@ -386,7 +382,7 @@ header h1{
 }
 
 
-/* media quieries */
+/* media queries */
 @media screen and (max-width:768px){
     #pano{
         height:300px;
@@ -416,4 +412,7 @@ header h1{
     .logo{
         text-align: center;
     }
+}
+@media screen and (max-width:500px){
+
 }
