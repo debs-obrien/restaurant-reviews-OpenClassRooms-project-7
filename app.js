@@ -257,9 +257,11 @@ function initMap() {
                                 zIndex: 52,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
+                            if (!(navigator.userAgent).indexOf("Mobile")){
+                                google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
+                                google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
+                            }
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
-                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
                             if (sort3Star) {
@@ -299,11 +301,11 @@ function initMap() {
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
                            if (!(navigator.userAgent).indexOf("Mobile")){
-                               google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
+                               google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
+                               google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
                            }
-                            google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
-                            google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
-                            google.maps.event.addListener(map, "click", closeInfoWindow);
+                           google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
+                           google.maps.event.addListener(map, "click", closeInfoWindow);
                             if (sort3Star) {
                                 if (Math.round(myRestaurants[i].rating) <= 3) {
                                     addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
