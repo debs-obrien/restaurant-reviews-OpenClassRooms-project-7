@@ -13,7 +13,8 @@ p{
 }
 .loading{
     text-align: center;
-    width:600px;
+    width:100%;
+    max-width:600px;
     margin:100px auto;
 }
 .loading p{

@@ -73,10 +73,6 @@ function initMap() {
                 lng: position.coords.longitude,
 
             };
-            let palma = {
-                lat: 39.5696,
-                lng: 2.6502,
-            };
             /*if(pos.lat){
                 searchDiv.style.display = "block";
                 sortOptionsDiv.style.display = "block";
@@ -289,50 +285,50 @@ function initMap() {
                                 addResultsAndMarkers(i, results, i);
                             }
                         }
+                        //if position is palma show my restaurants
+                            for (let i = 0; i < myRestaurants.length; i++) {
+                                markers[googleRestaurants.length +i] = new google.maps.Marker({
+                                    position: myRestaurants[i].geometry.location,
+                                    placeId: myRestaurants[i].id,
+                                    //animation: google.maps.Animation.DROP,
+                                    icon: createMarkerStars(myRestaurants[i]),
+                                    zIndex: 52,
+                                    id: myRestaurants[i].id,
+                                });
+                                // If the user clicks a restaurant marker, show the details of that restaurant
+                                if (!(navigator.userAgent).indexOf("Mobile")){
+                                    google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
+                                    google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
+                                }
+                                google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
+                                google.maps.event.addListener(map, "click", closeInfoWindow);
+                                if (sort3Star) {
+                                    if (Math.round(myRestaurants[i].rating) <= 3) {
+                                        addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
+                                    }
+                                } else if (sort4Star) {
+                                    if (Math.round(myRestaurants[i].rating) === 4) {
+                                        addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
+                                    }
+                                } else if (sort5Star) {
+                                    if (Math.round(myRestaurants[i].rating) === 5) {
+                                        addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
+                                    }
+                                } else {
+                                    if (sortAsc) {
+                                        myRestaurants.sort(function (a, b) {
+                                            return b.rating - a.rating;
+                                        });
+                                    } else if (sortDesc) {
+                                        myRestaurants.sort(function (a, b) {
+                                            return a.rating - b.rating;
+                                        });
+                                    }
+                                    addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
+                                }
 
-                       for (let i = 0; i < myRestaurants.length; i++) {
-                            markers[googleRestaurants.length +i] = new google.maps.Marker({
-                                position: myRestaurants[i].geometry.location,
-                                placeId: myRestaurants[i].id,
-                                //animation: google.maps.Animation.DROP,
-                                icon: createMarkerStars(myRestaurants[i]),
-                                zIndex: 52,
-                                id: myRestaurants[i].id,
-                            });
-                            // If the user clicks a restaurant marker, show the details of that restaurant
-                           if (!(navigator.userAgent).indexOf("Mobile")){
-                               google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
-                               google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
-                           }
-                           google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
-                           google.maps.event.addListener(map, "click", closeInfoWindow);
-                            if (sort3Star) {
-                                if (Math.round(myRestaurants[i].rating) <= 3) {
-                                    addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
-                                }
-                            } else if (sort4Star) {
-                                if (Math.round(myRestaurants[i].rating) === 4) {
-                                    addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
-                                }
-                            } else if (sort5Star) {
-                                if (Math.round(myRestaurants[i].rating) === 5) {
-                                    addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
-                                }
-                            } else {
-                                if (sortAsc) {
-                                    myRestaurants.sort(function (a, b) {
-                                        return b.rating - a.rating;
-                                    });
-                                } else if (sortDesc) {
-                                    myRestaurants.sort(function (a, b) {
-                                        return a.rating - b.rating;
-                                    });
-                                }
-                                addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
-                            }
                         }
-
-
+                        
                         /*let moreButton = document.getElementById('more');
                         if (pagination.hasNextPage) {
 
