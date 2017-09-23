@@ -591,13 +591,18 @@ function initMap() {
                             pitch: 0
                         });
                         panorama.setVisible(true);
-
+                        /*-----------------------------------------------------------------------------------
+                        click street view button and show street view hide photo
+                        -------------------------------------------------------------------------------------*/
                         seeStreetView.addEventListener("click", function(){
                             seeStreetView.style.display = 'none';
                             seePhoto.style.display = 'block';
                             streetViewWrapper.style.display = 'block';
                             photoDiv.style.display = 'none';
                         });
+                        /*-----------------------------------------------------------------------------------
+                        click photo  button and show photo hide street view
+                        -------------------------------------------------------------------------------------*/
                         seePhoto.addEventListener("click", function(){
                             seeStreetView.style.display = 'block';
                             seePhoto.style.display = 'none';
@@ -661,7 +666,6 @@ function initMap() {
             Builds the big info Window
             -------------------------------------------------------------------------------------*/
             function buildIWContent(place) {
-                console.log(place);
                 document.getElementById('iw-icon').innerHTML = '<img class="photo" ' + 'src="' + createPhoto(place) + '"/>';
                 document.getElementById('iw-url').innerHTML = '<b><a href="#restaurant-info">' + place.name + '</a></b>';
                 document.getElementById('iw-address').textContent = place.vicinity;
