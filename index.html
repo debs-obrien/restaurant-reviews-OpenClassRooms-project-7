@@ -87,18 +87,27 @@
     </div>
     <div id="restaurant-info">
         <div class="container">
-            <div id="pano" class="street-view"></div>
-            <div class="restaurant">
-                <div class="heading">
-                    <h2 class="restaurant-name" id="name"></h2>
-                    <button class="main-button" id="back-to-map-button" ><a href="#header">Back to Map</a></button>
+            <div id="street-view">
+                <div id="street-view-wrapper">
+                    <div id="pano"></div>
                 </div>
+                <div id="photo"></div>
+            </div>
+
+            <div class="restaurant">
+                <div class="button-menu">
+                    <button class="main-button" id="back-to-map-button" ><a href="#header">Back to Map</a></button>
+                    <button class="main-button" id="see-photo" >See Photo</button>
+                    <button class="main-button" id="see-street-view" >See Street View</button>
+                    <button class="main-button" id="add-review-button" ><a href="#add-review">Add a Review</a></button>
+
+                </div>
+                <h2 class="restaurant-name" id="name"></h2>
                 <p class="restaurant-details" id="address"></p>
                 <p class="restaurant-details" id="telephone"></p>
                 <p class="restaurant-details" id="website"></p>
                 <div class="review-header">
                     <h3 class="title">Reviews</h3>
-                    <button class="main-button" id="add-review-button" ><a href="#add-review">Add a Review</a></button>
                 </div>
                 <div id="reviews"></div>
                 <div id="show-message"></div>

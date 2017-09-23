@@ -28,12 +28,18 @@ p{
     margin-bottom:20px;
     background-color: #fff;
 }
-#pano{
+#street-view{
     height: auto;
     max-height:600px;
     order: 1;
     width: 100%;
     min-width: 320px;
+}
+#pano, #street-view-wrapper{
+    max-height:600px;
+    width: 100%;
+    min-width: 320px;
+    height: 100%;
 }
 
 #listing {
@@ -250,7 +256,7 @@ header h1{
     color:#c2e254;
     text-decoration:underline;
 }
-#website a:hover, .main-button:hover, #iw-website a:hover{
+#website a:hover, #iw-website a:hover{
     color:#ffc527;
     text-decoration:underline;
 }
@@ -289,10 +295,21 @@ header h1{
     font-size: 11px;
     height: 40px;
     min-width: 90px;
+    margin: 0 0 0 10px;
 }
 .main-button a{
     text-decoration: none;
     color:#fff;
+}
+#see-photo, #see-street-view{
+    min-width:105px;
+}
+#street-view{
+    height: auto;
+    max-height: 600px;
+    order: 1;
+    width: 100%;
+    min-width: 320px;
 }
 .review-header{
     display:flex;
@@ -323,6 +340,9 @@ header h1{
     max-width: 300px;
     max-height: 200px;
 }
+#photo{
+    order: 2;
+}
 #info-content-small .photo{
     height: 35px;
     width: 50px;
@@ -351,10 +371,9 @@ header h1{
     color:#ffc527;
     text-decoration:underline;
 }
-.heading{
+.button-menu{
     display:flex;
-    justify-content: space-between;
-    margin: 10px 0;
+    justify-content: flex-end;
 }
 .heading h2{
     margin:0;
@@ -390,7 +409,7 @@ header h1{
 
 /* media queries */
 @media screen and (max-width:768px){
-    #pano{
+    #street-view{
         height:300px;
         display:none;
     }
@@ -418,7 +437,4 @@ header h1{
     .logo{
         text-align: center;
     }
-}
-@media screen and (max-width:500px){
-
 }

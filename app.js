@@ -22,8 +22,6 @@ let myRestaurants = [];
 let googleRestaurants = [];
 let allRestaurants = [];
 let restaurantInfoDiv = document.getElementById('restaurant-info');
-let seeReviewsLink = document.getElementById('iw-reviews');
-//let seeReviewsLink2 = document.getElementById('iw-reviews');
 let searchDiv = document.getElementById('search');
 let sortOptionsDiv = document.getElementById('sort-options');
 sortOptionsDiv.style.display = "none";
@@ -31,6 +29,7 @@ restaurantInfoDiv.style.display = "none";
 searchDiv.style.display = "none";
 let sortBy = document.getElementById('sort');
 let form = document.getElementById('form-add-restaurant');
+let hasPhoto = true;
 
 function restSort() {
     sortAsc = false;
@@ -226,7 +225,6 @@ function initMap() {
             }
 
             function search() {
-                allRestaurants = [];
                 let search = {
                     bounds: map.getBounds(),
                     type: ['restaurant']
@@ -241,9 +239,6 @@ function initMap() {
                         for (let i = 0; i < results.length; i++) {
                             googleRestaurants.push(results[i]);
                         }
-
-                        allRestaurants = [];
-                        allRestaurants = googleRestaurants.concat(myRestaurants);
                         for (let i = 0; i < results.length; i++) {
                             markers[i] = new google.maps.Marker({
                                 position: results[i].geometry.location,
@@ -253,10 +248,8 @@ function initMap() {
                                 zIndex: 52,
                             });
                             // If the user clicks a restaurant marker, show the details of that restaurant
-                            //if (!(navigator.userAgent).indexOf("Mobile")){
-                                google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
-                                google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
-                           // }
+                            google.maps.event.addListener(markers[i], 'mouseover', showInfoWindowSmall);
+                            google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
 
@@ -295,10 +288,8 @@ function initMap() {
                                     id: myRestaurants[i].id,
                                 });
                                 // If the user clicks a restaurant marker, show the details of that restaurant
-                                //if (!(navigator.userAgent).indexOf("Mobile")){
-                                    google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
-                                    google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
-                                //}
+                                google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseover', showInfoWindowSmallMy);
+                                google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
                                 google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
                                 google.maps.event.addListener(map, "click", closeInfoWindow);
                                 if (sort3Star) {
@@ -440,12 +431,16 @@ function initMap() {
                 let photo;
                 if (!photos) {
                     photo = place.icon;
+                    hasPhoto = false;
                 } else {
+                    hasPhoto = true;
                     photo = photos[0].getUrl({
                         'maxWidth': 600,
                         'maxHeight': 400
                     });
+                    createPhotoGallery(place);
                 }
+
                 return photo;
             }
 
@@ -565,23 +560,56 @@ function initMap() {
                 /*-----------------------------------------------------------------------------------
                 adds the street view functionality
                 -------------------------------------------------------------------------------------*/
-                let panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+
                 let sv = new google.maps.StreetViewService();
                 sv.getPanorama({
                     location: place.geometry.location,
                     radius: 50
                 }, processSVData);
 
+                const panoDiv = document.getElementById('pano');
+                const streetViewWrapper = document.getElementById('street-view-wrapper');
+                const photoDiv = document.getElementById('photo');
+                const seePhoto = document.getElementById('see-photo');
+                const seeStreetView = document.getElementById('see-street-view');
+                photoDiv.innerHTML = '<img class="photo-big" ' + 'src="' + createPhoto(place) + '"/>';
+
+                streetViewWrapper.style.display = 'block';
+                seeStreetView.style.display = 'none';
+                photoDiv.style.display = 'none';
+                if(hasPhoto){
+                    seePhoto.style.display = 'block';
+                }else{
+                    seePhoto.style.display = 'none';
+                }
+
                 function processSVData(data, status) {
                     if (status === 'OK') {
+                        let panorama = new google.maps.StreetViewPanorama(panoDiv);
                         panorama.setPano(data.location.pano);
                         panorama.setPov({
                             heading: 270,
                             pitch: 0
                         });
                         panorama.setVisible(true);
+
+                        seeStreetView.addEventListener("click", function(){
+                            seeStreetView.style.display = 'none';
+                            seePhoto.style.display = 'block';
+                            streetViewWrapper.style.display = 'block';
+                            photoDiv.style.display = 'none';
+                        });
+                        seePhoto.addEventListener("click", function(){
+                            seeStreetView.style.display = 'block';
+                            seePhoto.style.display = 'none';
+                            streetViewWrapper.style.display = 'none';
+                            photoDiv.style.display = 'block';
+                        });
+
                     } else {
-                        panorama.innerHTML = '<img class="photo-big" ' + 'src="' + createPhoto(place) + '"/>';
+                        seePhoto.style.display = 'none';
+                        streetViewWrapper.style.display = 'none';
+                        photoDiv.style.display = 'block';
                     }
                 }
             }
