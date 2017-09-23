@@ -438,7 +438,6 @@ function initMap() {
                         'maxWidth': 600,
                         'maxHeight': 400
                     });
-                    createPhotoGallery(place);
                 }
 
                 return photo;
