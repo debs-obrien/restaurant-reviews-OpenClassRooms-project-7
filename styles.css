@@ -437,4 +437,7 @@ header h1{
     .logo{
         text-align: center;
     }
+    #see-street-view, #see-photo{
+        display:none !important;
+    }
 }
