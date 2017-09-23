@@ -411,7 +411,6 @@ header h1{
 @media screen and (max-width:768px){
     #street-view{
         height:300px;
-        display:none;
     }
     .info-wrapper{
         width: auto;
@@ -437,7 +436,5 @@ header h1{
     .logo{
         text-align: center;
     }
-    #see-street-view, #see-photo{
-        display:none !important;
-    }
+    
 }

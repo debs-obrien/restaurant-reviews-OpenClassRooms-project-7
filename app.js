@@ -252,6 +252,7 @@ function initMap() {
                             google.maps.event.addListener(markers[i], 'mouseout', closeInfoWindowSmall);
                             google.maps.event.addListener(markers[i], 'click', showInfoWindow);
                             google.maps.event.addListener(map, "click", closeInfoWindow);
+                            google.maps.event.addListener(markers[i], "touchstart", closeInfoWindow);
 
                             if (sort3Star) {
                                 if (Math.round(results[i].rating) <= 3) {
@@ -292,7 +293,7 @@ function initMap() {
                                 google.maps.event.addListener(markers[googleRestaurants.length +i], 'mouseout', closeInfoWindowSmall);
                                 google.maps.event.addListener(markers[googleRestaurants.length +i], 'click', showInfoWindowMy);
                                 google.maps.event.addListener(map, "click", closeInfoWindow);
-                                google.maps.event.addListener(markers[googleRestaurants.length +i], "touchstart", closeInfoWindowSmall);
+                                google.maps.event.addListener(markers[googleRestaurants.length +i], "touchstart", closeInfoWindow);
                                 if (sort3Star) {
                                     if (Math.round(myRestaurants[i].rating) <= 3) {
                                         addResultsAndMarkers(googleRestaurants.length+i, myRestaurants, i);
