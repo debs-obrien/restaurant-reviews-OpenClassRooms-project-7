@@ -791,6 +791,7 @@ function initMap() {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
         showError(error);
+        console.log('error' + error)
 
     }
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
