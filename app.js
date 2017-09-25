@@ -285,7 +285,6 @@ function initMap() {
                                 markers[googleRestaurants.length +i] = new google.maps.Marker({
                                     position: myRestaurants[i].geometry.location,
                                     placeId: myRestaurants[i].id,
-                                    //animation: google.maps.Animation.DROP,
                                     icon: createMarkerStars(myRestaurants[i]),
                                     zIndex: 52,
                                     id: myRestaurants[i].id,
