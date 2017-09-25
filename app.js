@@ -790,36 +790,37 @@ function initMap() {
     } else {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
-
+        showError(error);
 
     }
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        showError(error);
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
             'Error: The Geolocation service failed.' :
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
-        showError(error);
-        let loadingDiv= document.getElementById('loading');
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    loadingDiv.innerHTML = "User denied the request for Geolocation."
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    loadingDiv.innerHTML = "Location information is unavailable."
-                    break;
-                case error.TIMEOUT:
-                    loadingDiv.innerHTML = "The request to get user location timed out."
-                    break;
-                case error.UNKNOWN_ERROR:
-                    loadingDiv.innerHTML = "An unknown error occurred."
-                    break;
-            }
-        }
+
     }
 
 
+}
+function showError(error) {
+    let loadingDiv= document.getElementById('loading');
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            loadingDiv.innerHTML = "User denied the request for Geolocation."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            loadingDiv.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            loadingDiv.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            loadingDiv.innerHTML = "An unknown error occurred."
+            break;
+    }
 }
 
 /*-----------------------------------------------------------------------------------
