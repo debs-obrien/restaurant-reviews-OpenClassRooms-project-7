@@ -784,12 +784,22 @@ function initMap() {
 
 
 
-        }, function () {
-            handleLocationError(true, infoWindow, map.getCenter());
+        }, function (error) {
+            if(error.code == 0){
+                // unknown error
+            } else if(error.code == 1) {
+                // permission denied
+            } else if(error.code == 2) {
+                // position unavailable
+            } else if(error.code == 3) {
+                // timeout
+            }
+            console.log(error.message);
+            //handleLocationError(true, infoWindow, map.getCenter(pos));
         });
     } else {
         // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
+        handleLocationError(false, infoWindow, map.getCenter(pos));
         showError(error);
         console.log('error' + error)
 
