@@ -785,13 +785,33 @@ function initMap() {
 
 
         }, function (error) {
-
+            let loadingDiv= document.getElementById('loading');
+            if(error.code === 0){
+                loadingDiv.innerHTML = "An unknown error occurred.";
+            } else if(error.code === 1) {
+                loadingDiv.innerHTML = "User denied the request for Geolocation. Refresh the broswer and allow Geolocation";
+            } else if(error.code === 2) {
+                loadingDiv.innerHTML = "Location information is unavailable.";
+            } else if(error.code === 3) {
+                loadingDiv.innerHTML = "The request to get user location timed out.";
+            }
             console.log(error.message);
             //handleLocationError(true, infoWindow, map.getCenter(pos));
         });
     } else {
         // Browser doesn't support Geolocation
         //handleLocationError(false, infoWindow, map.getCenter(pos));
+
+            let loadingDiv= document.getElementById('loading');
+            if(error.code === 0){
+                loadingDiv.innerHTML = "An unknown error occurred.";
+            } else if(error.code === 1) {
+                loadingDiv.innerHTML = "User denied the request for Geolocation.";
+            } else if(error.code === 2) {
+                loadingDiv.innerHTML = "Location information is unavailable.";
+            } else if(error.code === 3) {
+                loadingDiv.innerHTML = "The request to get user location timed out.";
+            }
         showError(error);
         console.log('error' + error)
 
@@ -810,14 +830,19 @@ function initMap() {
 }
 function showError(error) {
     let loadingDiv= document.getElementById('loading');
-    if(error.code === 0){
-        loadingDiv.innerHTML = "An unknown error occurred.";
-    } else if(error.code === 1) {
-        loadingDiv.innerHTML = "User denied the request for Geolocation. Refresh the page and allow geolocation";
-    } else if(error.code === 2) {
-        loadingDiv.innerHTML = "Location information is unavailable.";
-    } else if(error.code === 3) {
-        loadingDiv.innerHTML = "The request to get user location timed out.";
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            loadingDiv.innerHTML = "User denied the request for Geolocation."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            loadingDiv.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            loadingDiv.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            loadingDiv.innerHTML = "An unknown error occurred."
+            break;
     }
 }
 
