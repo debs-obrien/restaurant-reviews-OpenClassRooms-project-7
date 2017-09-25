@@ -799,20 +799,23 @@ function initMap() {
             'Error: The Geolocation service failed.' :
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
+        showError(error);
         let loadingDiv= document.getElementById('loading');
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                loadingDiv.innerHTML = "User denied the request for Geolocation.";
-                break;
-            case error.POSITION_UNAVAILABLE:
-                loadingDiv.innerHTML = "Location information is unavailable.";
-                break;
-            case error.TIMEOUT:
-                loadingDiv.innerHTML = "The request to get user location timed out.";
-                break;
-            case error.UNKNOWN_ERROR:
-                loadingDiv.innerHTML = "An unknown error occurred.";
-                break;
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    loadingDiv.innerHTML = "User denied the request for Geolocation."
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    loadingDiv.innerHTML = "Location information is unavailable."
+                    break;
+                case error.TIMEOUT:
+                    loadingDiv.innerHTML = "The request to get user location timed out."
+                    break;
+                case error.UNKNOWN_ERROR:
+                    loadingDiv.innerHTML = "An unknown error occurred."
+                    break;
+            }
         }
     }
 
