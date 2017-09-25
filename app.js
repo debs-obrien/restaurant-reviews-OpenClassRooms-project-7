@@ -799,7 +799,7 @@ function initMap() {
         });
     } else {
         // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter(pos));
+        //handleLocationError(false, infoWindow, map.getCenter(pos));
         showError(error);
         console.log('error' + error)
 
