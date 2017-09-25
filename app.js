@@ -801,6 +801,17 @@ function initMap() {
     } else {
         // Browser doesn't support Geolocation
         //handleLocationError(false, infoWindow, map.getCenter(pos));
+
+            let loadingDiv= document.getElementById('loading');
+            if(error.code === 0){
+                loadingDiv.innerHTML = "An unknown error occurred.";
+            } else if(error.code === 1) {
+                loadingDiv.innerHTML = "User denied the request for Geolocation.";
+            } else if(error.code === 2) {
+                loadingDiv.innerHTML = "Location information is unavailable.";
+            } else if(error.code === 3) {
+                loadingDiv.innerHTML = "The request to get user location timed out.";
+            }
         showError(error);
         console.log('error' + error)
 
