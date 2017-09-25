@@ -785,14 +785,15 @@ function initMap() {
 
 
         }, function (error) {
-            if(error.code == 0){
-                // unknown error
-            } else if(error.code == 1) {
-                // permission denied
-            } else if(error.code == 2) {
-                // position unavailable
-            } else if(error.code == 3) {
-                // timeout
+            let loadingDiv= document.getElementById('loading');
+            if(error.code === 0){
+                loadingDiv.innerHTML = "An unknown error occurred.";
+            } else if(error.code === 1) {
+                loadingDiv.innerHTML = "User denied the request for Geolocation.";
+            } else if(error.code === 2) {
+                loadingDiv.innerHTML = "Location information is unavailable.";
+            } else if(error.code === 3) {
+                loadingDiv.innerHTML = "The request to get user location timed out.";
             }
             console.log(error.message);
             //handleLocationError(true, infoWindow, map.getCenter(pos));
