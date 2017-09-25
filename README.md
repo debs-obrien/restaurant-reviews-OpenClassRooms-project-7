@@ -20,7 +20,7 @@
 ### View the applicatiion here
 https://debs-obrien.github.io/restaurant-reviews-OpenClassRooms-project-7
 
-![Screenshot](img/screenshot.png)
+![Screenshot](img/Screenshot.png)
 
 ### Example Code
 ```javascript
