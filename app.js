@@ -30,7 +30,10 @@ searchDiv.style.display = "none";
 let sortBy = document.getElementById('sort');
 let form = document.getElementById('form-add-restaurant');
 let hasPhoto = true;
-let pos;
+let pos = {
+    lat: 39.5696,
+    lng: 2.6502,
+};
 
 function restSort() {
     sortAsc = false;
@@ -71,7 +74,6 @@ function initMap() {
             pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
-
             };
 
 
