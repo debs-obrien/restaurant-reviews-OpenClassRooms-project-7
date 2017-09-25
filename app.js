@@ -20,7 +20,6 @@ let newPlace = [];
 let newResNum = -1;
 let myRestaurants = [];
 let googleRestaurants = [];
-let allRestaurants = [];
 let restaurantInfoDiv = document.getElementById('restaurant-info');
 let searchDiv = document.getElementById('search');
 let sortOptionsDiv = document.getElementById('sort-options');
@@ -791,6 +790,21 @@ function initMap() {
     } else {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
+        let loadingDiv= document.getElementById('loading');
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                loadingDiv.innerHTML = "User denied the request for Geolocation.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                loadingDiv.innerHTML = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                loadingDiv.innerHTML = "The request to get user location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                loadingDiv.innerHTML = "An unknown error occurred.";
+                break;
+        }
     }
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
@@ -799,12 +813,6 @@ function initMap() {
             'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
     }
-
-
-    /*if(pos.lat){
-                searchDiv.style.display = "block";
-                sortOptionsDiv.style.display = "block";
-            }*/
 
 
 }
