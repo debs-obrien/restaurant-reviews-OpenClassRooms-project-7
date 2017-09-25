@@ -813,7 +813,7 @@ function showError(error) {
     if(error.code === 0){
         loadingDiv.innerHTML = "An unknown error occurred.";
     } else if(error.code === 1) {
-        loadingDiv.innerHTML = "User denied the request for Geolocation.";
+        loadingDiv.innerHTML = "User denied the request for Geolocation. Refresh the page and allow geolocation";
     } else if(error.code === 2) {
         loadingDiv.innerHTML = "Location information is unavailable.";
     } else if(error.code === 3) {
